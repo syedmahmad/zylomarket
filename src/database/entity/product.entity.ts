@@ -16,7 +16,6 @@ export class Product extends Model<Product> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'Product Name', // Optionally set default
 
   })
   name: string;
@@ -32,8 +31,18 @@ export class Product extends Model<Product> {
   })
   price: number;
 
-  @Column(DataType.STRING)
-  imageUrl: string;
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+    allowNull: false,
+  })
+  status: number;
+
+  @Column({
+    type: 'DECIMAL',
+    defaultValue: 0,
+  })
+  discount: number;
 
   @Column({
     type: DataType.INTEGER,  // Correct for an integer column in the database
@@ -42,6 +51,8 @@ export class Product extends Model<Product> {
   })
   stock: number;  // TypeScript type is `number`, but Sequelize will ensure it is an integer
 
+  @Column({ defaultValue: false })
+  isOnSale: boolean;
 
   @ForeignKey(() => Store)
   @Column({
@@ -52,7 +63,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => ProductImage)
   images: ProductImage[];
-  
+
   @BelongsTo(() => Store)
   store: Store;
 }

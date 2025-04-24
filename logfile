@@ -1,0 +1,60 @@
+2025-04-20 15:45:13.755 PKT [53101] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:45:13.756 PKT [53101] LOG:  could not bind IPv6 address "::1": Address already in use
+2025-04-20 15:45:13.756 PKT [53101] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:45:13.757 PKT [53101] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-04-20 15:45:13.757 PKT [53101] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:45:13.757 PKT [53101] WARNING:  could not create listen socket for "localhost"
+2025-04-20 15:45:13.757 PKT [53101] FATAL:  could not create any TCP/IP sockets
+2025-04-20 15:45:13.758 PKT [53101] LOG:  database system is shut down
+2025-04-20 15:46:49.106 PKT [54089] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:46:49.107 PKT [54089] LOG:  could not bind IPv6 address "::1": Address already in use
+2025-04-20 15:46:49.107 PKT [54089] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:46:49.107 PKT [54089] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-04-20 15:46:49.107 PKT [54089] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:46:49.107 PKT [54089] WARNING:  could not create listen socket for "localhost"
+2025-04-20 15:46:49.107 PKT [54089] FATAL:  could not create any TCP/IP sockets
+2025-04-20 15:46:49.108 PKT [54089] LOG:  database system is shut down
+2025-04-20 15:47:42.821 PKT [54723] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:47:42.822 PKT [54723] LOG:  could not bind IPv6 address "::1": Address already in use
+2025-04-20 15:47:42.822 PKT [54723] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:47:42.822 PKT [54723] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-04-20 15:47:42.822 PKT [54723] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:47:42.822 PKT [54723] WARNING:  could not create listen socket for "localhost"
+2025-04-20 15:47:42.822 PKT [54723] FATAL:  could not create any TCP/IP sockets
+2025-04-20 15:47:42.823 PKT [54723] LOG:  database system is shut down
+2025-04-20 15:48:41.535 PKT [55395] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:48:41.536 PKT [55395] LOG:  could not bind IPv6 address "::1": Address already in use
+2025-04-20 15:48:41.536 PKT [55395] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:48:41.536 PKT [55395] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-04-20 15:48:41.536 PKT [55395] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:48:41.536 PKT [55395] WARNING:  could not create listen socket for "localhost"
+2025-04-20 15:48:41.536 PKT [55395] FATAL:  could not create any TCP/IP sockets
+2025-04-20 15:48:41.537 PKT [55395] LOG:  database system is shut down
+2025-04-20 15:49:12.258 PKT [55739] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:49:12.259 PKT [55739] LOG:  could not bind IPv6 address "::1": Address already in use
+2025-04-20 15:49:12.259 PKT [55739] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:49:12.259 PKT [55739] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-04-20 15:49:12.259 PKT [55739] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2025-04-20 15:49:12.259 PKT [55739] WARNING:  could not create listen socket for "localhost"
+2025-04-20 15:49:12.259 PKT [55739] FATAL:  could not create any TCP/IP sockets
+2025-04-20 15:49:12.261 PKT [55739] LOG:  database system is shut down
+2025-04-20 15:51:02.310 PKT [56956] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:51:02.311 PKT [56956] LOG:  listening on IPv6 address "::1", port 5432
+2025-04-20 15:51:02.311 PKT [56956] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-04-20 15:51:02.311 PKT [56956] FATAL:  could not open lock file "/tmp/.s.PGSQL.5432.lock": Permission denied
+2025-04-20 15:51:02.312 PKT [56956] LOG:  database system is shut down
+2025-04-20 15:52:28.049 PKT [57905] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 15:52:28.050 PKT [57905] LOG:  listening on IPv6 address "::1", port 5432
+2025-04-20 15:52:28.051 PKT [57905] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-04-20 15:52:28.051 PKT [57905] FATAL:  could not open lock file "/tmp/.s.PGSQL.5432.lock": Permission denied
+2025-04-20 15:52:28.052 PKT [57905] LOG:  database system is shut down
+2025-04-20 16:47:41.886 PKT [5397] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 16:47:41.887 PKT [5397] LOG:  listening on IPv6 address "::1", port 5432
+2025-04-20 16:47:41.887 PKT [5397] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-04-20 16:47:41.887 PKT [5397] FATAL:  could not open lock file "/tmp/.s.PGSQL.5432.lock": Permission denied
+2025-04-20 16:47:41.888 PKT [5397] LOG:  database system is shut down
+2025-04-20 17:22:56.573 PKT [53150] LOG:  starting PostgreSQL 14.17 (Homebrew) on x86_64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2025-04-20 17:22:56.574 PKT [53150] LOG:  listening on IPv6 address "::1", port 5432
+2025-04-20 17:22:56.574 PKT [53150] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-04-20 17:22:56.575 PKT [53150] FATAL:  could not open lock file "/tmp/.s.PGSQL.5432.lock": Permission denied
+2025-04-20 17:22:56.576 PKT [53150] LOG:  database system is shut down
