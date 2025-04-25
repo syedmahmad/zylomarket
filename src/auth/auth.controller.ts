@@ -22,13 +22,11 @@ export class AuthController {
   async register(
     @Body() body: RegisterDto,
   ) {
-    console.log('body', body)
     return this.authService.register(body.name, body.email, body.password);
   }
 
   @Post('google')
   async googleAuth(@Body() body: { credential: string }) {
-    console.log('Google Auth Body:', body);
     try {
       const ticket = await this.googleClient.verifyIdToken({
         idToken: body.credential,

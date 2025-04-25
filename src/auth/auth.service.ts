@@ -23,7 +23,6 @@ export class AuthService {
   ) {}
 
   async register(name: string, email: string, password: string) {
-    console.log('Registering user:', { name, email });
 
     const existing = await this.usersRepository.findOne({ where: { email } });
     if (existing) throw new Error('User already exists');
@@ -169,7 +168,6 @@ export class AuthService {
    * Creates a default store entry for the user
    */
   private async createDefaultStoreForUser(user: User) {
-    console.log('Creating default store for user:', user);
     const domain = `${slugify(user.dataValues.name, { lower: true })}.${process.env.APP_DOMAIN || 'yourplatform.com'}`;
     return this.storeRepository.create({
       name: `${user.dataValues.name}'s Store`,

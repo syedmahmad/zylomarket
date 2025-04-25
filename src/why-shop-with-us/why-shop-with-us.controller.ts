@@ -8,7 +8,6 @@ export class WhyShopWithUsController {
 
   @Post()
   create(@Body() createWhyShopWithUsDto: CreateWhyShopWithUsDto) {
-    console.log('Received body:', createWhyShopWithUsDto);
     return this.whyShopWithUsService.createOrUpdate(createWhyShopWithUsDto);
   }
 
