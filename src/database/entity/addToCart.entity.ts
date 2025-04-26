@@ -1,4 +1,4 @@
-import { Table, Model, Column, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Table, Model, Column, ForeignKey, BelongsTo, DataType } from 'sequelize-typescript';
 import { User } from './user.entity';
 import { Product } from './product.entity';
 
@@ -7,6 +7,12 @@ export class CartItem extends Model {
   @ForeignKey(() => User)
   @Column
   userId: number;
+
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  cart_item_uuid: string;
 
   @ForeignKey(() => Product)
   @Column

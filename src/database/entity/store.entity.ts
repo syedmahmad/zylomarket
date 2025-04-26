@@ -21,6 +21,12 @@ export class Store extends Model<Store> {
   declare id: number;
 
   @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  stores_uuid: string;
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })

@@ -16,6 +16,12 @@ export class User extends Model<User> {
   @Column({ allowNull: false })
   name: string;
 
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  users_uuid: string;
+
   @Column({ unique: true, allowNull: false })
   email: string;
 

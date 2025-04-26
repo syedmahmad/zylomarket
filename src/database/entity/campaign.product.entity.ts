@@ -13,6 +13,14 @@ import {
   
   @Table({ tableName: 'campaign_products', timestamps: true })
   export class CampaignProduct extends Model<CampaignProduct> {
+
+    @Column({
+      type: DataType.UUID,
+      defaultValue: DataType.UUIDV4,
+    })
+    campaign_product_uuid: string;
+
+    
     @ForeignKey(() => SalesCampaign)
     @Column({ type: DataType.INTEGER, allowNull: false })
     salesCampaignId: number;

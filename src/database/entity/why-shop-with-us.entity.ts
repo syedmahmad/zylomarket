@@ -22,6 +22,12 @@ export class WhyShopSection extends Model<WhyShopSection> {
   @Column({ type: DataType.INTEGER })
   declare id: number;
 
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  uuid: string;
+  
   @Column({ type: DataType.STRING, allowNull: false })
   sectionTitle: string;
 

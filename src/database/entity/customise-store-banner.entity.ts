@@ -1,61 +1,67 @@
 // src/modules/store-customisation/entities/customise-store-banner.entity.ts
 
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    ForeignKey,
-    BelongsTo,
-    PrimaryKey,
-    AutoIncrement,
-    Default,
+  Table,
+  Column,
+  Model,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+  PrimaryKey,
+  AutoIncrement,
+  Default,
 } from 'sequelize-typescript';
 import { Store } from './store.entity';
 
 export enum TextPosition {
-    LEFT = 'left',
-    CENTER = 'center',
-    RIGHT = 'right',
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right',
 }
 
 @Table({ tableName: 'customise_store_banners', timestamps: true })
 export class CustomiseStoreBanner extends Model<CustomiseStoreBanner> {
-    @PrimaryKey
-    @AutoIncrement
-    @Column(DataType.INTEGER)
-    declare id: number;
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  customise_banner_uuid: string;
 
-    @ForeignKey(() => Store)
-    @Column({ type: DataType.INTEGER, allowNull: false })
-    storeId: number;
+  @PrimaryKey
+  @AutoIncrement
+  @Column(DataType.INTEGER)
+  declare id: number;
 
-    @BelongsTo(() => Store)
-    store: Store;
+  @ForeignKey(() => Store)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  storeId: number;
 
-    @Column({ type: DataType.STRING, allowNull: false })
-    title: string;
+  @BelongsTo(() => Store)
+  store: Store;
 
-    @Column({ type: DataType.TEXT, allowNull: true })
-    description?: string;
+  @Column({ type: DataType.STRING, allowNull: false })
+  title: string;
 
-    @Column({ type: DataType.STRING, allowNull: true })
-    imageUrl?: string;
+  @Column({ type: DataType.TEXT, allowNull: true })
+  description?: string;
 
-    @Column({ type: DataType.STRING, allowNull: true })
-    buttonText?: string;
+  @Column({ type: DataType.STRING, allowNull: true })
+  imageUrl?: string;
 
-    @Column({ type: DataType.STRING, allowNull: true })
-    buttonLink?: string;
+  @Column({ type: DataType.STRING, allowNull: true })
+  buttonText?: string;
 
-    @Column({
-        type: DataType.ENUM(...Object.values(TextPosition)),
-        allowNull: true,
-        defaultValue: TextPosition.LEFT,
-    })
-    textPosition?: TextPosition;
+  @Column({ type: DataType.STRING, allowNull: true })
+  buttonLink?: string;
 
-    @Default(true)
-    @Column({ type: DataType.BOOLEAN })
-    isActive: boolean;
+  @Column({
+    type: DataType.ENUM(...Object.values(TextPosition)),
+    allowNull: true,
+    defaultValue: TextPosition.LEFT,
+  })
+  textPosition?: TextPosition;
+
+  @Default(true)
+  @Column({ type: DataType.BOOLEAN })
+  isActive: boolean;
 }
