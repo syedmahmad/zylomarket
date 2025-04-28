@@ -10,9 +10,10 @@ import { SaleProductModule } from './sale-product/sale-product.module';
 import { CustomiseStoreBannerModule } from './customise-store-banner/customise-store-banner.module';
 import { WhyShopWithUsModule } from './why-shop-with-us/why-shop-with-us.module';
 import { OurCustomerSectionModule } from './our-customer-section/our-customer-section.module';
+import { MerchantsModule } from './merchants/merchants.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule],
   controllers: [AppController],
   providers: [AppService],
 })

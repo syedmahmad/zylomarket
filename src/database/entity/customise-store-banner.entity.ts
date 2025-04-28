@@ -21,6 +21,7 @@ export enum TextPosition {
 
 @Table({ tableName: 'customise_store_banners', timestamps: true })
 export class CustomiseStoreBanner extends Model<CustomiseStoreBanner> {
+
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,

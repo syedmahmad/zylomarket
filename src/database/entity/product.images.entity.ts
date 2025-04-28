@@ -5,11 +5,19 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  PrimaryKey,
+  AutoIncrement,
 } from 'sequelize-typescript';
 import { Product } from './product.entity';
 
 @Table({ tableName: 'product_images' })
 export class ProductImage extends Model<ProductImage> {
+
+  @PrimaryKey
+      @AutoIncrement
+      @Column(DataType.INTEGER)
+      declare id: number;
+      
   @ForeignKey(() => Product)
   @Column({
     type: DataType.INTEGER,

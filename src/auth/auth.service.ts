@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import slugify from 'slugify';
 import { User } from 'src/database/entity/user.entity';
 import { Store } from 'src/database/entity/store.entity';
+import { Merchant } from 'src/database/entity/merchant.entity';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,8 @@ export class AuthService {
     private usersRepository: typeof User,
     @Inject('STORE_REPOSITORY')
     private storeRepository: typeof Store,
+    @Inject('MERCHANT_REPOSITORY')
+    private readonly merchantRepository: typeof Merchant,
     private jwtService: JwtService,
   ) {}
 
@@ -36,7 +39,9 @@ export class AuthService {
       provider: 'local',
     } as User);
 
-    await this.createDefaultStoreForUser(user);
+    const storeInfo = await this.createDefaultStoreForUser(user);
+
+    await this.insertInfoInMerchantTable(user, storeInfo)
 
     return user;
   }
@@ -100,8 +105,14 @@ export class AuthService {
     if (!existingStore) {
       await this.createDefaultStoreForUser(user);
     }
+    const storeInfo = await this.storeRepository.findOne({ where: { ownerId: user.id } });
+    if(!storeInfo) {
+      console.log(`No store found for user with id ${user.id}`);
+      return; }
+    await this.insertInfoInMerchantTable(user, storeInfo);
 
     const sanitizedUser = this.sanitizeUser(user);
+
 
     return {
       user: sanitizedUser,
@@ -163,6 +174,26 @@ export class AuthService {
 
     return this.jwtService.sign(payload);
   }
+
+/**
+ * create entry in merchant table as user will be created we will be adding user id and store id in the merchant table.
+ * for later use.
+ */
+
+private async insertInfoInMerchantTable (user: User, store: Store) {
+  return this.merchantRepository.create({
+    userId: user.id,
+    storeId: store.id,
+    totalSalesCount: 0,
+    totalSalesValue: 0,
+    totalProductsSold: 0,
+  }as Merchant)
+}
+
+
+
+
+
 
   /**
    * Creates a default store entry for the user

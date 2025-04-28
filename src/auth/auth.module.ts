@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { userProvider } from './providers/user-provider';
 import { JwtModule } from '@nestjs/jwt';
 import { storeProvider } from './providers/store.provider';
+import { merchantProvider } from './providers/merchant.provider';
 
 
 @Module({
@@ -16,7 +17,8 @@ import { storeProvider } from './providers/store.provider';
   controllers: [AuthController],
   providers: [AuthService,
     ...userProvider,
-    ...storeProvider
+    ...storeProvider,
+    ...merchantProvider
   ],
   exports: ['USER_REPOSITORY'],
 })

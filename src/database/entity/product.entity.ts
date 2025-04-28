@@ -6,12 +6,20 @@ import {
   ForeignKey,
   BelongsTo,
   HasMany,
+  PrimaryKey,
+  AutoIncrement,
 } from 'sequelize-typescript';
 import { Store } from './store.entity';
 import { ProductImage } from './product.images.entity';
+import { Merchant } from './merchant.entity';
 
 @Table({ tableName: 'products' })
 export class Product extends Model<Product> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column(DataType.INTEGER)
+  declare id: number;
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -69,4 +77,11 @@ export class Product extends Model<Product> {
 
   @BelongsTo(() => Store)
   store: Store;
+
+  @ForeignKey(() => Merchant) // Foreign key pointing to the Merchant table
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  merchantId: number;
+
+  @BelongsTo(() => Merchant)
+  merchant: Merchant;
 }

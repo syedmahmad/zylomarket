@@ -9,6 +9,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Store } from './store.entity';
+import { Merchant } from './merchant.entity';
 
 @Table({ tableName: 'testimonials', timestamps: true })
 export class Testimonial extends Model<Testimonial> {
@@ -44,4 +45,11 @@ export class Testimonial extends Model<Testimonial> {
 
   @Column(DataType.INTEGER)
   rating: number; // 1-5
+
+  @ForeignKey(() => Merchant) // Foreign key pointing to the Merchant table
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  merchantId: number;
+
+  @BelongsTo(() => Merchant)
+  merchant: Merchant;
 }
