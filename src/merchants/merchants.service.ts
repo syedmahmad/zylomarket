@@ -20,7 +20,7 @@ export class MerchantsService {
   // merchants.service.ts
   async findAll() {
     return await this.merchantRepository.findAll({
-      include: { all: true }, // fetch associated user and store if relations are defined
+      include: { all: true },
     });
   }
 }

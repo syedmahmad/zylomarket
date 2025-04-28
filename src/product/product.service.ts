@@ -4,6 +4,7 @@ import { ProductImage } from 'src/database/entity/product.images.entity';
 import { Store } from 'src/database/entity/store.entity';
 import { SalesCampaign } from 'src/database/entity/sales.campaign.entity';  // Import the SalesCampaign entity
 import { CampaignProduct } from 'src/database/entity/campaign.product.entity'; // Import CampaignProduct entity
+import { Merchant } from 'src/database/entity/merchant.entity';
 
 @Injectable()
 export class ProductService {
@@ -18,6 +19,9 @@ export class ProductService {
     private salesCampaignRepository: typeof SalesCampaign,  
     @Inject('CAMPAIGN_PRODUCT_REPOSITORY')
     private campaignProductRepository: typeof CampaignProduct,  
+
+    @Inject ('MERCHANT_REPOSITORY')
+    private merchantRepository: typeof Merchant
   ) { }
 
   async create(createProductDto: any, ownerId: number) {
@@ -26,6 +30,15 @@ export class ProductService {
     if (!store) {
       throw new NotFoundException(`Store with owner ID ${ownerId} not found.`);
     }
+
+    const merchantInfo = await this.merchantRepository.findOne({where : {userId: ownerId, storeId: store.id}})
+    if(!merchantInfo) {
+      throw new NotFoundException(`Merchant with owner ID ${ownerId} not found.`);
+    }
+
+    console.log('merchantInfo',merchantInfo.id);
+
+
   
     const {
       imageUrls,
@@ -42,6 +55,7 @@ export class ProductService {
     const product = await this.productRepository.create({
       ...productData,
       storeId: store.id,
+      merchantId: merchantInfo.id,
       isOnSale: isOnSale === 1 ? true : false, // Convert to boolean
     });
   

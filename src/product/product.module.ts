@@ -3,14 +3,15 @@ import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 import { Product } from 'src/database/entity/product.entity';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { productProvider } from './Providers/product.provider';
+import { productProvider } from './providers/product.provider';
 import { ProductImage } from 'src/database/entity/product.images.entity';
-import { productImageProvider } from './Providers/product-image.provider';
-import { storeProvider } from './Providers/store.provider';
+import { productImageProvider } from './providers/product-image.provider';
+import { storeProvider } from './providers/store.provider';
 import { CampaignProduct } from 'src/database/entity/campaign.product.entity';
 import { SalesCampaign } from 'src/database/entity/sales.campaign.entity';
-import { salesCampaignProvider } from './Providers/saleCampaign.provider';
-import { campaignProductProvider } from './Providers/campaign.product.provider';
+import { salesCampaignProvider } from './providers/saleCampaign.provider';
+import { campaignProductProvider } from './providers/campaign.product.provider';
+import { merchantProvider } from './providers/merchant.provider';
 
 @Module({
   imports: [SequelizeModule.forFeature([Product,
@@ -21,7 +22,8 @@ import { campaignProductProvider } from './Providers/campaign.product.provider';
     ...productImageProvider,
     ...storeProvider,
     ...salesCampaignProvider,
-    ...campaignProductProvider
+    ...campaignProductProvider,
+    ...merchantProvider
   ],
 })
 export class ProductModule { }
