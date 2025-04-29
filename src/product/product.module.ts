@@ -13,6 +13,7 @@ import { campaignProductProvider } from './providers/campaign.product.provider';
 import { merchantProvider } from './providers/merchant.provider';
 import { productImageProvider } from './providers/productImage.provider';
 
+
 @Module({
   imports: [SequelizeModule.forFeature([Product,
     ProductImage, CampaignProduct, SalesCampaign])],
