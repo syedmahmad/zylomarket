@@ -5,7 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Merchant } from 'src/database/entity/merchant.entity';
 import { merchantProvider } from './providers/merchant.provider';
 import { storeProvider } from './providers/store.provider';
-import { userProvider } from './providers/user-provider';
+import { userProvider } from './providers/user.provider';
 
 @Module({
   imports: [SequelizeModule.forFeature([Merchant])],
