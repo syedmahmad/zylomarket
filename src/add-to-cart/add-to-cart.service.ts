@@ -4,22 +4,77 @@ import { UpdateAddToCartDto } from './dto/update-add-to-cart.dto';
 import { CartItem } from 'src/database/entity/addToCart.entity';
 // Assuming Product is a related model
 import { Product } from 'src/database/entity/product.entity';
+import { Merchant } from 'src/database/entity/merchant.entity';
+import { Store } from 'src/database/entity/store.entity';
 
 @Injectable()
 export class AddToCartService {
   constructor(
     @Inject('CART_ITEM_REPOSITORY')
     private cartItemModel: typeof CartItem,
+
+    @Inject('MERCHANT_REPOSITORY')
+    private merchantRepository: typeof Merchant,
+  
+    @Inject('STORE_REPOSITORY')
+    private storeRepository: typeof Store,
+
+    @Inject('PRODUCT_REPOSITORY')
+    private productRepository: typeof Product
   ) { }
 
-  /**
+   /**
    * Add a product to the cart.
    * If already exists, increase quantity.
    */
-  async addToCart(userId: number, productId: number, quantity: number) {
+   async addToCart(userId: number, productId: number, quantity: number) {
+    console.log('productId',productId);
+    console.log('userId',userId);
+    console.log('quantity',quantity);
+    if (!productId) {
+      throw new Error('Invalid productId: undefined');
+    }
+
+    // Step 1: Find the product
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+
+    console.log('product',product)
+
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found.`);
+    }
+
+    // Step 2: Optional - validate store exists (skip if not needed)
+    const store = await this.storeRepository.findOne({
+      where: { ownerId: userId },
+    });
+
+    console.log('store', store)
+
+    if (!store) {
+      throw new NotFoundException(`Store with ID ${product.storeId} not found.`);
+    }
+
+    // Step 3: Validate merchant
+    const merchant = await this.merchantRepository.findOne({
+      where: { userId: userId, storeId: store.id },
+    });
+
+    if (!merchant) {
+      throw new NotFoundException(
+        `Merchant with ID ${product.merchantId} not found in store ${store.id}.`,
+      );
+    }
+
+    // Step 4: Create or update CartItem with merchantId
     const [item, created] = await this.cartItemModel.findOrCreate({
       where: { userId, productId },
-      defaults: { quantity },
+      defaults: {
+        quantity,
+        merchantId: merchant.id,
+      },
     });
 
     if (!created) {
@@ -29,6 +84,24 @@ export class AddToCartService {
 
     return item;
   }
+
+  /**
+   * Add a product to the cart.
+   * If already exists, increase quantity.
+   */
+  // async addToCart(userId: number, productId: number, quantity: number) {
+  //   const [item, created] = await this.cartItemModel.findOrCreate({
+  //     where: { userId, productId },
+  //     defaults: { quantity },
+  //   });
+
+  //   if (!created) {
+  //     item.quantity += quantity;
+  //     await item.save();
+  //   }
+
+  //   return item;
+  // }
 
   /**
    * Get all cart items for a user.
