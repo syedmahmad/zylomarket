@@ -36,9 +36,6 @@ export class ProductService {
       throw new NotFoundException(`Merchant with owner ID ${ownerId} not found.`);
     }
 
-    console.log('merchantInfo',merchantInfo.id);
-
-
   
     const {
       imageUrls,
