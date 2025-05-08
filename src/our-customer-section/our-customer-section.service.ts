@@ -3,6 +3,7 @@ import { CreateOurCustomerSectionDto } from './dto/create-our-customer-section.d
 import { UpdateOurCustomerSectionDto } from './dto/update-our-customer-section.dto';
 import { Testimonial } from 'src/database/entity/ourCustomer.entity';
 import { Store } from 'src/database/entity/store.entity';
+import { Merchant } from 'src/database/entity/merchant.entity';
 
 @Injectable()
 export class OurCustomerSectionService {
@@ -10,7 +11,12 @@ export class OurCustomerSectionService {
     @Inject('OUR_CUSTOMER_REPOSITORY')
     private readonly ourCustomerRepository: typeof Testimonial,
     @Inject('STORE_REPOSITORY')
-    private readonly storeRepository: typeof Store
+    private readonly storeRepository: typeof Store,
+
+    @Inject('MERCHANT_REPOSITORY')
+    private merchantRepository: typeof Merchant,
+      
+    
   ) { }
 
   async create(data: any): Promise<Testimonial> {
@@ -22,9 +28,21 @@ export class OurCustomerSectionService {
       throw new NotFoundException(`Store with owner ID ${userId} not found.`);
     }
 
+      // Step 3: Validate merchant
+        const merchant = await this.merchantRepository.findOne({
+          where: { userId: userId, storeId: store.id },
+        });
+    
+        if (!merchant) {
+          throw new NotFoundException(
+            `Merchant not found in store ${store.id}.`,
+          );
+        }
+
     return this.ourCustomerRepository.create({
       ...data,
-      storeId: store.dataValues.id
+      storeId: store.dataValues.id,
+      merchantId: merchant.id
     }
     );
   }
@@ -55,7 +73,7 @@ export class OurCustomerSectionService {
       throw new NotFoundException(`Testimonial with ID ${id} not found.`);
     }
 
-    await testimonial.update(updateDto);
+    await testimonial.update({...updateDto});
 
     return testimonial;
   }

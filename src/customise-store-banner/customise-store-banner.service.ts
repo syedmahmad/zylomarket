@@ -6,7 +6,7 @@ import { Store } from 'src/database/entity/store.entity';
 export class CustomiseStoreBannerService {
   constructor(
     @Inject('CUSTOMISE_STORE_BANNER_REPOSITORY')
-    private readonly bannerModel: typeof CustomiseStoreBanner, // Assuming CustomiseStoreBanner is the model class
+    private readonly bannerModel: typeof CustomiseStoreBanner, 
     @Inject('STORE_REPOSITORY')
     private readonly storeRepository: typeof Store
 
@@ -50,10 +50,6 @@ export class CustomiseStoreBannerService {
   }
 
 
-  // async findAllByStore(storeId: number) {
-  //   return this.bannerModel.findAll({ where: { storeId } });
-  // }
-
   async findOne(id: number) {
 
     const store = await this.storeRepository.findOne({
@@ -71,13 +67,28 @@ export class CustomiseStoreBannerService {
     return banner;
   }
 
-  // async update(id: number, dto: UpdateCustomiseStoreBannerDto) {
-  //   const banner = await this.findOne(id);
-  //   return banner.update(dto);
-  // }
+  async removeImage(uuid: string): Promise<{ message: string }> {
+    const banner = await this.bannerModel.findOne({
+      where: { customise_banner_uuid: uuid },
+    });
+  
+    if (!banner) {
+      throw new NotFoundException('Banner not found');
+    }
+  
+    // if (!banner.imageUrl) {
+    //   return { message: 'No image to remove' };
+    // }
+  
+    console.log('banner',banner)
+    await this.bannerModel.update(
+      // @ts-ignore
+      { imageUrl: null },
+      { where: { customise_banner_uuid: uuid } }
+    );
+  
+    return { message: 'Image URL removed from banner successfully' };
+  }
+  
 
-  // async remove(id: number) {
-  //   const banner = await this.findOne(id);
-  //   return banner.destroy();
-  // }
 }

@@ -51,7 +51,6 @@ export class AddToCartService {
       where: { ownerId: userId },
     });
 
-    console.log('store', store)
 
     if (!store) {
       throw new NotFoundException(`Store with ID ${product.storeId} not found.`);

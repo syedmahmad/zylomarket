@@ -47,10 +47,10 @@ export class CustomiseStoreBanner extends Model<CustomiseStoreBanner> {
   description?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  imageUrl?: string;
+  imageUrl: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  buttonText?: string;
+  buttonText: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
   buttonLink?: string;
