@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule); // ✅ use Express app
 
   app.enableCors({
-    origin: ['http://localhost:3001', 'https://ecommerce-store-nine-sigma.vercel.app/'],
+    origin: ['http://localhost:3001', 'https://ecommerce-store-nine-sigma.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
