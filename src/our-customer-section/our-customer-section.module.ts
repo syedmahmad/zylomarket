@@ -5,13 +5,15 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Testimonial } from 'src/database/entity/ourCustomer.entity';
 import { ourCustomerProvider } from './provider/customer.provider';
 import { storeProvider } from './provider/store.provider';
+import { merchantProvider } from './provider/merchant.provider';
 
 @Module({
   imports: [SequelizeModule.forFeature([Testimonial])],
   controllers: [OurCustomerSectionController],
   providers: [OurCustomerSectionService,
     ...ourCustomerProvider,
-    ...storeProvider
+    ...storeProvider,
+    ...merchantProvider
   ],
 })
 export class OurCustomerSectionModule { }

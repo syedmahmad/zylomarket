@@ -16,23 +16,14 @@ export class CustomiseStoreBannerController {
   }
 
 
-  // @Get()
-  // findAll() {
-  //   return this.customiseStoreBannerService.findAll();
-  // }
-
   @Get()
   findOne(@Query('id') id: string) {
     return this.customiseStoreBannerService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCustomiseStoreBannerDto: UpdateCustomiseStoreBannerDto) {
-  //   return this.customiseStoreBannerService.update(+id, updateCustomiseStoreBannerDto);
-  // }
+  @Delete('image')
+  async deleteImage(@Query('uuid') uuid: string) {
+    return this.customiseStoreBannerService.removeImage(uuid);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.customiseStoreBannerService.remove(+id);
-  // }
 }
