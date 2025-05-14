@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { OurCustomerSectionService } from './our-customer-section.service';
 import { CreateOurCustomerSectionDto } from './dto/create-our-customer-section.dto';
 import { UpdateOurCustomerSectionDto } from './dto/update-our-customer-section.dto';
@@ -26,5 +26,8 @@ export class OurCustomerSectionController {
   remove(@Param('id') id: string) {
     return this.ourCustomerSectionService.remove(+id);
   }
-
+ @Delete('image')
+  async deleteImage(@Query('uuid') uuid: string) {
+    return this.ourCustomerSectionService.removeImage(uuid);
+  }
 }

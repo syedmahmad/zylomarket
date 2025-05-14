@@ -76,11 +76,7 @@ export class CustomiseStoreBannerService {
       throw new NotFoundException('Banner not found');
     }
   
-    // if (!banner.imageUrl) {
-    //   return { message: 'No image to remove' };
-    // }
-  
-    console.log('banner',banner)
+
     await this.bannerModel.update(
       // @ts-ignore
       { imageUrl: null },

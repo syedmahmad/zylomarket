@@ -11,9 +11,11 @@ import { CustomiseStoreBannerModule } from './customise-store-banner/customise-s
 import { WhyShopWithUsModule } from './why-shop-with-us/why-shop-with-us.module';
 import { OurCustomerSectionModule } from './our-customer-section/our-customer-section.module';
 import { MerchantsModule } from './merchants/merchants.module';
+import { StoreModule } from './store/store.module';
+import { StoreThemeModule } from './store-theme/store-theme.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule, StoreModule, StoreThemeModule],
   controllers: [AppController],
   providers: [AppService],
 })

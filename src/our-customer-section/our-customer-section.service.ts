@@ -91,4 +91,25 @@ export class OurCustomerSectionService {
     return { message: `Testimonial with ID ${id} deleted successfully.` };
   }
 
+
+   async removeImage(uuid: string): Promise<{ message: string }> {
+      const banner = await this.ourCustomerRepository.findOne({
+        where: { testimonials_uuid: uuid },
+      });
+    
+      if (!banner) {
+        throw new NotFoundException('Banner not found');
+      }
+    
+  
+      await this.ourCustomerRepository.update(
+        // @ts-ignore
+        { imageUrl: null },
+        { where: { testimonials_uuid: uuid } }
+      );
+    
+      return { message: 'Image URL removed from banner successfully' };
+    }
+    
+
 }

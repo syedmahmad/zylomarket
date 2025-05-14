@@ -31,6 +31,20 @@ export class Testimonial extends Model<Testimonial> {
   @BelongsTo(() => Store)
   store: Store;
 
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue: "What Our Customers Say",
+  })
+  heading: string;
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue:
+      "Don't just take our word for it. Here's what our customers have to say about their shopping experience.",
+  })
+  subHeading: string;
+
   @Column(DataType.STRING)
   name: string;
 
