@@ -44,6 +44,12 @@ export class User extends Model<User> {
   @Column({ allowNull: true, field: 'last_name' })
   lastName: string;
 
-  @Column({ allowNull: true, defaultValue: false, field: 'email_verified' })
-  emailVerified: boolean;
+@Column({ allowNull: true })
+otpCode: string;
+
+@Column({ allowNull: true })
+otpExpiresAt: Date;
+
+@Column({ defaultValue: false })
+emailVerified: boolean;
 }

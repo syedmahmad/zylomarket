@@ -94,7 +94,7 @@ export class ProductService {
     return product;
   }
 
-  async findAll(id: number): Promise<Product[]> {
+  async findAllForAdmin(id: number): Promise<Product[]> {
     const store = await this.storeRepository.findOne({
       where: { ownerId: id },
     });
@@ -103,7 +103,22 @@ export class ProductService {
     }
 
     return await this.productRepository.findAll({
-      where: { storeId: store.dataValues.id },
+      where: { storeId: id },
+      include: { all: true },
+    });
+  }
+
+  
+  async findAll(id: number): Promise<Product[]> {
+    // const store = await this.storeRepository.findOne({
+    //   where: { ownerId: id },
+    // });
+    // if (!store) {
+    //   throw new NotFoundException(`Store with ID ${id} not found`);
+    // }
+
+    return await this.productRepository.findAll({
+      where: { storeId: id },
       include: { all: true },
     });
   }

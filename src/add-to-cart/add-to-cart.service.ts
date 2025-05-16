@@ -28,9 +28,6 @@ export class AddToCartService {
    * If already exists, increase quantity.
    */
    async addToCart(userId: number, productId: number, quantity: number) {
-    console.log('productId',productId);
-    console.log('userId',userId);
-    console.log('quantity',quantity);
     if (!productId) {
       throw new Error('Invalid productId: undefined');
     }
@@ -40,30 +37,29 @@ export class AddToCartService {
       where: { id: productId },
     });
 
-    console.log('product',product)
 
     if (!product) {
       throw new NotFoundException(`Product with ID ${productId} not found.`);
     }
 
-    // Step 2: Optional - validate store exists (skip if not needed)
-    const store = await this.storeRepository.findOne({
-      where: { ownerId: userId },
-    });
+    // // Step 2: Optional - validate store exists (skip if not needed)
+    // const store = await this.storeRepository.findOne({
+    //   where: { ownerId: userId },
+    // });
 
 
-    if (!store) {
-      throw new NotFoundException(`Store with ID ${product.storeId} not found.`);
-    }
+    // if (!store) {
+    //   throw new NotFoundException(`Store with ID ${product.storeId} not found.`);
+    // }
 
     // Step 3: Validate merchant
     const merchant = await this.merchantRepository.findOne({
-      where: { userId: userId, storeId: store.id },
+      where: { userId: userId, storeId: userId },
     });
 
     if (!merchant) {
       throw new NotFoundException(
-        `Merchant with ID ${product.merchantId} not found in store ${store.id}.`,
+        `Merchant with ID ${product.merchantId} not found in store ${userId}.`,
       );
     }
 

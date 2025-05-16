@@ -50,13 +50,13 @@ export class OurCustomerSectionService {
 
   async findOne(id: number) {
 
-    const store = await this.storeRepository.findOne({ where: { ownerId: id } });
+    // const store = await this.storeRepository.findOne({ where: { ownerId: id } });
 
-    if (!store) {
-      throw new NotFoundException(`Store with owner ID ${id} not found.`);
-    }
+    // if (!store) {
+    //   throw new NotFoundException(`Store with owner ID ${id} not found.`);
+    // }
 
-    const customersData = await this.ourCustomerRepository.findAll({ where: { storeId: store.dataValues.id } })
+    const customersData = await this.ourCustomerRepository.findAll({ where: { storeId: id} })
 
     if (!customersData) {
       return []
@@ -79,27 +79,34 @@ export class OurCustomerSectionService {
   }
 
 
-  async remove(id: number): Promise<{ message: string }> {
-    const testimonial = await this.ourCustomerRepository.findByPk(id);
+  async remove(id: number): Promise<{ message: string; remaining: any[] }> {
+  const testimonial = await this.ourCustomerRepository.findByPk(id);
 
-    if (!testimonial) {
-      throw new NotFoundException(`Testimonial with ID ${id} not found.`);
-    }
-
-    await testimonial.destroy();
-
-    return { message: `Testimonial with ID ${id} deleted successfully.` };
+  if (!testimonial) {
+    throw new NotFoundException(`Testimonial with ID ${id} not found.`);
   }
 
+  await testimonial.destroy();
 
-   async removeImage(uuid: string): Promise<{ message: string }> {
-      const banner = await this.ourCustomerRepository.findOne({
-        where: { testimonials_uuid: uuid },
-      });
+  // Fetch remaining testimonials
+  const remaining = await this.ourCustomerRepository.findAll();
+
+  return {
+    message: `Testimonial with ID ${id} deleted successfully.`,
+    remaining,
+  };
+}
+
+
+
+   async removeImage(uuid: any): Promise<{ message: string }> {
+      // const banner = await this.ourCustomerRepository.findOne({
+      //   where: { testimonials_uuid: uuid },
+      // });
     
-      if (!banner) {
-        throw new NotFoundException('Banner not found');
-      }
+      // if (!banner) {
+      //   throw new NotFoundException('Banner not found');
+      // }
     
   
       await this.ourCustomerRepository.update(

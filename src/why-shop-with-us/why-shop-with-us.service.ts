@@ -78,14 +78,14 @@ export class WhyShopWithUsService {
   async findOne(id: number) {
 
 
-    const store = await this.storeRepository.findOne({ where: { ownerId: id } });
+    // const store = await this.storeRepository.findOne({ where: { ownerId: id } });
 
 
-    if (!store) {
-      throw new NotFoundException(`Store with owner ID ${id} not found.`);
-    }
+    // if (!store) {
+    //   throw new NotFoundException(`Store with owner ID ${id} not found.`);
+    // }
     const section = await this.whyShopWithUsRepository.findOne({
-      where: { storeId: store.dataValues.id },
+      where: { storeId: id},
       include: [WhyShopFeature],
     });
 

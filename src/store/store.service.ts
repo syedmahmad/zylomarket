@@ -21,8 +21,6 @@ export class StoreService {
 
  async update(stores_uuid: any, updateStoreDto: any) {
   const store = await this.storeRepository.findOne({ where: { stores_uuid } });
-
-  console.log('store',store)
   if (!store) {
     throw new BadRequestException(`Store with UUID ${stores_uuid} not found.`);
   }

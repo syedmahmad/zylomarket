@@ -5,6 +5,7 @@ import { userProvider } from './providers/user.provider';
 import { JwtModule } from '@nestjs/jwt';
 import { storeProvider } from './providers/store.provider';
 import { merchantProvider } from './providers/merchant.provider';
+import { EmailService } from 'src/email-verification/email-verification.service';
 
 
 @Module({
@@ -15,7 +16,7 @@ import { merchantProvider } from './providers/merchant.provider';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService,
+  providers: [AuthService, EmailService,
     ...userProvider,
     ...storeProvider,
     ...merchantProvider

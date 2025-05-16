@@ -28,6 +28,6 @@ export class OurCustomerSectionController {
   }
  @Delete('image')
   async deleteImage(@Query('uuid') uuid: string) {
-    return this.ourCustomerSectionService.removeImage(uuid);
+    return this.ourCustomerSectionService.removeImage(+uuid);
   }
 }

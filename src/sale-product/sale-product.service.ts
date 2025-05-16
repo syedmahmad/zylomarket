@@ -21,12 +21,12 @@ export class SaleProductService {
 
 
   async getSaleProducts(id: number) {
-    const store = await this.storeRepository.findOne({
-      where: { ownerId: id },
-    });
-    if (!store) {
-      throw new NotFoundException(`Store with ID ${id} not found`);
-    }
+    // const store = await this.storeRepository.findOne({
+    //   where: { ownerId: id },
+    // });
+    // if (!store) {
+    //   throw new NotFoundException(`Store with ID ${id} not found`);
+    // }
 
     const productsOnSale = await this.productRepository.findAll({
       where: {
@@ -41,10 +41,10 @@ export class SaleProductService {
       return [];
     }
 
-    const storeId = productsOnSale[0].dataValues.storeId;
+    // const storeId = productsOnSale[0].dataValues.storeId;
 
     const saleCampaigns = await this.salesCampaignRepository.findAll({
-      where: { storeId },
+      where: { storeId: id },
       include: { all: true },
     });
 

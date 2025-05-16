@@ -63,8 +63,17 @@ export class StoreThemeService {
   async findByStore(storeId: number): Promise<StoreTheme> {
     const theme = await this.storeThemeModelRepository.findOne({ where: { storeId } });
 
+    const defaultThemeValue: any = {
+    themeId: "light",
+    name: "Light",
+    primary: "#4f46e5", // Indigo-600
+    secondary: "#f9fafb", // Gray-50
+    background: "#ffffff", // White
+    text: "#111827", // Gray-900
+    accent: "#f97316", // Orange-500
+  }
     if (!theme) {
-      throw new NotFoundException('Theme not found for this store');
+      return defaultThemeValue
     }
 
     return theme;

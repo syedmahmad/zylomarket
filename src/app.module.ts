@@ -13,9 +13,10 @@ import { OurCustomerSectionModule } from './our-customer-section/our-customer-se
 import { MerchantsModule } from './merchants/merchants.module';
 import { StoreModule } from './store/store.module';
 import { StoreThemeModule } from './store-theme/store-theme.module';
+import { EmailVerificationModule } from './email-verification/email-verification.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule, StoreModule, StoreThemeModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule, StoreModule, StoreThemeModule, EmailVerificationModule],
   controllers: [AppController],
   providers: [AppService],
 })

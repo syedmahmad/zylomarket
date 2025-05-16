@@ -19,6 +19,11 @@ export class ProductController {
   }
   
 
+@Get('admin')
+  findAllProductForAdmin(@Query('id') id: string) {
+    return this.productService.findAllForAdmin(+id);
+  }
+
   @Get()
   findAllByStore(@Query('id') id: string) {
     return this.productService.findAll(+id);

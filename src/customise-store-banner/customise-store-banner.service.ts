@@ -52,17 +52,17 @@ export class CustomiseStoreBannerService {
 
   async findOne(id: number) {
 
-    const store = await this.storeRepository.findOne({
-      where: { ownerId: id },
-    });
+    // const store = await this.storeRepository.findOne({
+    //   where: { ownerId: id },
+    // });
 
 
-    if (!store) {
-      throw new NotFoundException(`Store with ID ${id} not found`);
-    }
+    // if (!store) {
+    //   throw new NotFoundException(`Store with ID ${id} not found`);
+    // }
 
 
-    const banner = await this.bannerModel.findOne({where: { storeId: store.dataValues.id }});
+    const banner = await this.bannerModel.findOne({where: { storeId: id }});
     if (!banner) [];
     return banner;
   }
