@@ -8,19 +8,19 @@ export class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: 'smtp.zoho.com',
       port: 587,
       secure: process.env.EMAIL_SECURE === 'true',
       auth: {
-        user: 'devm.ahmad@gmail.com',
-        pass: 'hiqyjcxbarvcgwuh',
+        user: 'team@zylospace.com',
+        pass: 'Syef4D3RTZQd',
       },
     });
   }
 
   async sendOTP(email: string, otp: string): Promise<void> {
     const mailOptions = {
-      from: 'devm.ahmad@gmail.com',
+      from: 'team@zylospace.com',
       to: email,
       subject: 'Your OTP for Email Verification',
       text: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
