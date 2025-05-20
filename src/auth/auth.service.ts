@@ -129,10 +129,6 @@ export class AuthService {
       emailVerified: true,
     });
 
-    // Now create store and merchant entries
-    const storeInfo = await this.createDefaultStoreForUser(user);
-    await this.insertInfoInMerchantTable(user, storeInfo);
-
     return {
       user: this.sanitizeUser(user),
       token: this.generateToken(user),

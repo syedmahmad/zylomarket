@@ -15,7 +15,6 @@ export class StoreController {
 
   @Patch(':stores_uuid')
   update(@Param('stores_uuid') stores_uuid: string, @Body() updateStoreDto: UpdateStoreDto) {
-    console.log('stores_uuid',stores_uuid)
     return this.storeService.update(stores_uuid, updateStoreDto);
   }
 

@@ -2,22 +2,38 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store } from 'src/database/entity/store.entity';
+import { User } from 'src/database/entity/user.entity';
 
 @Injectable()
 export class StoreService {
   constructor(
     @Inject('STORE_REPOSITORY')
     private storeRepository: typeof Store,
+
+    @Inject('USER_REPOSITORY')
+    private userRepository: typeof User,
   ) {}
 
+  
+ async findOne(id: number) {
+  const storeInfo = await this.storeRepository.findOne({
+    where: { ownerId: id },
+    include: [
+      {
+        model: this.userRepository,
+        as: 'owner', // must match alias in association
+      },
+    ],
+  });
 
-  findOne(id: number) {
-    const storeInfo = this.storeRepository.findOne({ where: { ownerId: id } });
-    if (!storeInfo) {
-      throw new BadRequestException(`Store with owner ID ${id} not found.`);
-    }
-    return storeInfo;
+  if (!storeInfo) {
+    throw new BadRequestException(`Store with owner ID ${id} not found.`);
   }
+
+  return storeInfo; // now includes storeInfo.owner
+}
+
+
 
  async update(stores_uuid: any, updateStoreDto: any) {
   const store = await this.storeRepository.findOne({ where: { stores_uuid } });
@@ -34,7 +50,7 @@ export class StoreService {
 
 async deleteStoreLogo(stores_uuid: any) {
   const store = await this.storeRepository.findOne({ where: { stores_uuid } });
-  console.log('store',store);
+
   if (!store) {
     throw new BadRequestException(`Store with UUID ${stores_uuid} not found.`);
   }

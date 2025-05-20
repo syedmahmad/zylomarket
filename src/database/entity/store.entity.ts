@@ -50,6 +50,12 @@ export class Store extends Model<Store> {
   })
   domain: string; // e.g. mycoolstore.yourplatform.com
 
+   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  contactNumber: string; 
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
