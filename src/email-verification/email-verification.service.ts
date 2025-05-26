@@ -9,11 +9,11 @@ export class EmailService {
   constructor() {
     this.transporter = nodemailer.createTransport({
       host: 'smtp.zoho.com',
-      port: 587,
-      secure: process.env.EMAIL_SECURE === 'true',
+      port: 465,
+      secure: true, // Important: must be true for port 465
       auth: {
         user: 'team@zylospace.com',
-        pass: 'Syef4D3RTZQd',
+        pass: 'sUxETYZCHc9s',
       },
     });
   }

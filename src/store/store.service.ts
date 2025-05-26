@@ -35,6 +35,20 @@ export class StoreService {
 
 
 
+ async findStoreInfoForUserView(id: number) {
+  const storeInfo = await this.storeRepository.findOne({
+    where: { id: id }
+  });
+
+  if (!storeInfo) {
+    throw new BadRequestException(`Store with owner ID ${id} not found.`);
+  }
+
+  return storeInfo; // now includes storeInfo.owner
+}
+
+
+
  async update(stores_uuid: any, updateStoreDto: any) {
   const store = await this.storeRepository.findOne({ where: { stores_uuid } });
   if (!store) {

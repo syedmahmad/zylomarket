@@ -13,6 +13,12 @@ export class StoreController {
     return this.storeService.findOne(+id);
   }
 
+  @Get('/user/:id')
+  findStoreInfoForUserView(@Param('id') id: string) {
+    return this.storeService.findStoreInfoForUserView(+id);
+  }
+
+
   @Patch(':stores_uuid')
   update(@Param('stores_uuid') stores_uuid: string, @Body() updateStoreDto: UpdateStoreDto) {
     return this.storeService.update(stores_uuid, updateStoreDto);
