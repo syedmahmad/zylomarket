@@ -44,8 +44,6 @@ export class  AuthService {
     const otpExpiresAt = new Date();
     otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + this.OTP_EXPIRY_MINUTES);
 
-    console.log('Sending OTP to:', user);
-    console.log('user',user.dataValues.email)
     await user.update({
       otpCode: await bcrypt.hash(otp, 10), // Hash the OTP before storing
       otpExpiresAt,

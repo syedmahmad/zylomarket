@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
+import { addAuditTrailHook } from './database/database.hooks'; // <-- adjust path if needed
+
+// Your other imports...
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -14,11 +18,30 @@ import { MerchantsModule } from './merchants/merchants.module';
 import { StoreModule } from './store/store.module';
 import { StoreThemeModule } from './store-theme/store-theme.module';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
-import { AuditTrailModule } from './audit-trail/audit-trail.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule, StoreModule, StoreThemeModule, EmailVerificationModule, AuditTrailModule],
+  imports: [
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+    ProductModule,
+    AddToCartModule,
+    SaleProductModule,
+    CustomiseStoreBannerModule,
+    WhyShopWithUsModule,
+    OurCustomerSectionModule,
+    MerchantsModule,
+    StoreModule,
+    StoreThemeModule,
+    EmailVerificationModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(private readonly sequelize: Sequelize) {}
+
+  onModuleInit() {
+    addAuditTrailHook(this.sequelize); // ✅ Call the hook here
+  }
+}

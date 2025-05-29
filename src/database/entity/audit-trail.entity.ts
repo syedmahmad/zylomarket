@@ -1,34 +1,34 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-} from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'audit_trails',
-  timestamps: true, // auto-manages createdAt & updatedAt
+  timestamps: true,
 })
 export class AuditTrail extends Model<AuditTrail> {
   @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+    type: DataType.STRING,
+    allowNull: false,
   })
-  declare id: number;
+  table: string;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
   rowId: number;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  action: 'CREATE' | 'UPDATE' | 'DELETE';
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  action: string;
 
-  @Column({ type: DataType.JSON, allowNull: true })
-  current_data: Record<string, any> | null;
+  @Column({
+    type: DataType.JSON,
+  })
+  current_data: string | null;
 
-  @Column({ type: DataType.JSON, allowNull: true })
-  previous_data: Record<string, any> | null;
-
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  userId: number;
+  @Column({
+    type: DataType.JSON,
+  })
+  previous_data: string | null;
 }

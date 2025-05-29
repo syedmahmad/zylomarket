@@ -3,6 +3,7 @@
   import { NestExpressApplication } from '@nestjs/platform-express'; 
   import { join } from 'path';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { addAuditTrailHook } from './database/database.hooks';
 // import { AuditedModel } from './audit-trail/audited.model';
 // import { AuditTrailService } from './audit-trail/audit-trail.service';
 
@@ -21,7 +22,6 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
     });
 
      app.useGlobalInterceptors(new LoggingInterceptor());
-
     await app.listen(process.env.PORT ?? 3000);
 
   }
