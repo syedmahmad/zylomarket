@@ -14,9 +14,10 @@ import { MerchantsModule } from './merchants/merchants.module';
 import { StoreModule } from './store/store.module';
 import { StoreThemeModule } from './store-theme/store-theme.module';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
+import { AuditTrailModule } from './audit-trail/audit-trail.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule, StoreModule, StoreThemeModule, EmailVerificationModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ProductModule, AddToCartModule, SaleProductModule, CustomiseStoreBannerModule, WhyShopWithUsModule, OurCustomerSectionModule, MerchantsModule, StoreModule, StoreThemeModule, EmailVerificationModule, AuditTrailModule],
   controllers: [AppController],
   providers: [AppService],
 })

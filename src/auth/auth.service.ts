@@ -18,7 +18,7 @@ import { ConflictException } from '@nestjs/common';
 
 
 @Injectable()
-export class AuthService {
+export class  AuthService {
     private readonly OTP_EXPIRY_MINUTES = 5;
 
   constructor(

@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { StoreThemeService } from './store-theme.service';
 import { CreateStoreThemeDto } from './dto/create-store-theme.dto';
 import { UpdateStoreThemeDto } from './dto/update-store-theme.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('store-theme')
 export class StoreThemeController {
@@ -21,6 +23,7 @@ export class StoreThemeController {
    * Expects userId in the request body
    */
   @Post(':id')
+  @UseGuards(AuthGuard('jwt'))
   async create(@Param('id') id: string,
    @Body() createStoreThemeDto: CreateStoreThemeDto ) {
     const { ...dto } = createStoreThemeDto;
