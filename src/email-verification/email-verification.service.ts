@@ -95,7 +95,7 @@ export class EmailService {
                 
                 <p>This code will expire in <strong>5 minutes</strong>. Please enter this code in the verification page to complete the process.</p>
                 
-                <p>If you didn't request this code, please ignore this email or contact our support team immediately at <a href="mailto:support@zylospace.com">support@zylospace.com</a>.</p>
+                <p>If you didn't request this code, please ignore this email or contact our support team immediately at <a href="mailto:contact@zylospace.com">contact@zylospace.com</a>.</p>
                 
                 <p>Thank you for choosing Zylospace!</p>
             </div>
