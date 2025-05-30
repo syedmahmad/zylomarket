@@ -21,7 +21,7 @@ export class WhyShopWithUsService {
   ) { }
 
   async createOrUpdate(dto: any) {
-    const { userId, sectionTitle, description, features = [] } = dto;
+    const { userId, sectionTitle, description, features = [], uuid } = dto;
   
     // Step 1: Validate store existence
     const store = await this.storeRepository.findOne({ where: { ownerId: userId } });
@@ -32,18 +32,25 @@ export class WhyShopWithUsService {
     const storeId = store.dataValues.id;
   
     // Step 2: Check if a section already exists for this store
-    let section = await this.whyShopWithUsRepository.findOne({ where: { storeId } });
+    let section: any = await this.whyShopWithUsRepository.findOne({ where: { storeId } });
   
     if (section) {
       // Step 3a: Update existing section
-      await section.update({ sectionTitle, description });
+      await section.update({ sectionTitle, description }, {
+      context: { userId: uuid },
+      individualHooks: true,
+    } as any);
     } else {
       // Step 3b: Create new section
       section = await this.whyShopWithUsRepository.create({
         sectionTitle,
         description,
         storeId,
-      } as WhyShopSection);
+      } as WhyShopSection,
+    {
+      context: { userId },
+      individualHooks: true,
+    } as any,);
     }
   
     // Step 4: Upsert features (simplest approach is delete & insert fresh)

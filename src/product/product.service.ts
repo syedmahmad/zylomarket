@@ -5,6 +5,7 @@ import { Store } from 'src/database/entity/store.entity';
 import { SalesCampaign } from 'src/database/entity/sales.campaign.entity';  // Import the SalesCampaign entity
 import { CampaignProduct } from 'src/database/entity/campaign.product.entity'; // Import CampaignProduct entity
 import { Merchant } from 'src/database/entity/merchant.entity';
+import { User } from 'src/database/entity/user.entity';
 
 @Injectable()
 export class ProductService {
@@ -21,7 +22,10 @@ export class ProductService {
     private campaignProductRepository: typeof CampaignProduct,  
 
     @Inject ('MERCHANT_REPOSITORY')
-    private merchantRepository: typeof Merchant
+    private merchantRepository: typeof Merchant,
+
+    @Inject('USER_REPOSITORY')
+    private userRepository: typeof User
   ) { }
 
   async create(createProductDto: any, ownerId: number) {
@@ -31,11 +35,19 @@ export class ProductService {
       throw new NotFoundException(`Store with owner ID ${ownerId} not found.`);
     }
 
+    const userInfo = await this.userRepository.findByPk(ownerId);
+
+    if(!userInfo) {
+      throw new NotFoundException(`Store owner with ID ${userInfo} not found.`);
+    }
+
+    console.log('userInfo',userInfo)
+    const userId = userInfo.dataValues?.users_uuid ;
+
     const merchantInfo = await this.merchantRepository.findOne({where : {userId: ownerId, storeId: store.id}})
     if(!merchantInfo) {
       throw new NotFoundException(`Merchant with owner ID ${ownerId} not found.`);
     }
-
   
     const {
       imageUrls,
@@ -49,12 +61,15 @@ export class ProductService {
     } = createProductDto;
   
     // Create product with reference to the store
-    const product = await this.productRepository.create({
+    const product: any = await this.productRepository.create({
       ...productData,
       storeId: store.id,
       merchantId: merchantInfo.id,
       isOnSale: isOnSale === 1 ? true : false, // Convert to boolean
-    });
+    }, {
+      context: { userId },
+      individualHooks: true, 
+    } as any);
   
     // Save image URLs if provided
     if (Array.isArray(imageUrls) && imageUrls.length > 0) {
@@ -75,20 +90,26 @@ export class ProductService {
       }
   
       // Create sales campaign
-      const salesCampaign = await this.salesCampaignRepository.create({
+      const salesCampaign: any = await this.salesCampaignRepository.create({
         title: saleTitle,
         description: saleDescription,
         startDate,
         bannerImageUrl: bannerImageUrl || null,
         endDate,
         storeId: store.id,
-      } as SalesCampaign);
+      } as SalesCampaign,  {
+      context: { userId },
+      individualHooks: true, 
+    } as any);
   
       // Associate the product with the campaign
       await this.campaignProductRepository.create({
         productId: product.id,
         salesCampaignId: salesCampaign.id,
-      } as CampaignProduct);
+      } as CampaignProduct, {
+      context: { userId },
+      individualHooks: true, 
+    } as any);
     }
   
     return product;
@@ -133,14 +154,19 @@ export class ProductService {
     return product;
   }
 
-  async update(id: number, updateProductDto: any): Promise<Product> {
+  async update(id: number, updateProductDto: any, uuid: string): Promise<Product> {
     const product = await this.findOne(id);
     
     // If the product's sale status is being updated, handle that as well
     const { isSaleOn, salesCampaignId, ...updatedData } = updateProductDto;
     
+    const userId= uuid;
     // Update product data
-    await product.update(updatedData);
+    // await product.update(updatedData);
+     await product.update(updatedData, {
+    context: { userId },
+    individualHooks: true,
+  });
 
     if (isSaleOn !== undefined) {
       if (isSaleOn && salesCampaignId) {
@@ -164,7 +190,12 @@ export class ProductService {
             productId: product.dataValues.id,
             salesCampaignId,
             // You can add discountPercentage or salePrice if needed
-          } as CampaignProduct);
+          } as CampaignProduct,
+           {
+          context: { userId },
+          individualHooks: true,
+        } as any);
+        // );
         }
       } else {
         // If the sale is being turned off, remove the link from CampaignProduct
@@ -173,15 +204,18 @@ export class ProductService {
             productId: product.dataValues.id,
             salesCampaignId,
           },
-        });
+          context: { userId },
+          individualHooks: true,
+        } as any);
       }
     }
 
     return product;
   }
 
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: number, uuid: string): Promise<{ message: string }> {
     const product = await this.findOne(id);
+    const userId = uuid;
   
     // 1. Remove any campaign-product associations first
     await this.campaignProductRepository.destroy({
@@ -190,11 +224,14 @@ export class ProductService {
   
     // 2. Delete associated product images
     await this.productImageRepository.destroy({
-      where: { productId: id },
-    });
+      where: { productId: id }});
   
     // 3. Now safely delete the product itself
-    await product.destroy();
+    await product.destroy(
+      {individualHooks: true,
+      context: { userId },
+    } as any
+    );
   
     return { message: `Product with ID ${id} has been removed.` };
   }

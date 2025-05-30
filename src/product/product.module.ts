@@ -19,6 +19,7 @@ import { campaignProductProvider } from 'src/product/Providers/campaign.product.
 import { merchantProvider } from 'src/product/Providers/merchant.provider';
 // @ts-ignore
 import { productProvider } from 'src/product/Providers/product.provider';
+import { userProvider } from './providers/user.provider';
 
 
 
@@ -32,7 +33,8 @@ import { productProvider } from 'src/product/Providers/product.provider';
     ...storeProvider,
     ...salesCampaignProvider,
     ...campaignProductProvider,
-    ...merchantProvider
+    ...merchantProvider,
+    ...userProvider
   ],
 })
 export class ProductModule { }

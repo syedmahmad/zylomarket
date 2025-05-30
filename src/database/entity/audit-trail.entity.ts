@@ -31,4 +31,10 @@ export class AuditTrail extends Model<AuditTrail> {
     type: DataType.JSON,
   })
   previous_data: string | null;
+
+    @Column({
+    type: DataType.UUID,
+    allowNull: true, // optional: make it `false` if you always expect a user
+  })
+  userId: string | null;
 }

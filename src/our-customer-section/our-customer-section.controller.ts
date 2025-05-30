@@ -27,8 +27,8 @@ export class OurCustomerSectionController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  remove(@Param('id') id: string) {
-    return this.ourCustomerSectionService.remove(+id);
+  remove(@Param('id') id: string, @Query('uuid') uuid :string) {
+    return this.ourCustomerSectionService.remove(+id, uuid);
   }
  @Delete('image')
  @UseGuards(AuthGuard('jwt'))

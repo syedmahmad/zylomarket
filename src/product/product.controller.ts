@@ -38,14 +38,15 @@ export class ProductController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Query('uuid') uuid: string) {
+    return this.productService.update(+id, updateProductDto,uuid);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  remove(@Param('id') id: string,  @Query('uuid') uuid: string) {
+    console.log('uuid',uuid)
+    return this.productService.remove(+id, uuid);
   }
 
   // ✅ Upload Route

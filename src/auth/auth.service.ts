@@ -16,7 +16,6 @@ import { EmailService } from 'src/email-verification/email-verification.service'
 import { ConflictException } from '@nestjs/common';
 
 
-
 @Injectable()
 export class  AuthService {
     private readonly OTP_EXPIRY_MINUTES = 5;
@@ -97,14 +96,6 @@ export class  AuthService {
     if (user.emailVerified) {
       throw new Error('Email already verified');
     }
-
-    console.log("User found:", {
-  email: user.dataValues.email,
-  otpCode: user.dataValues.otpCode,
-  otpExpiresAt: user.dataValues.otpExpiresAt,
-});
-
-
     if (!user.dataValues.otpCode || !user.dataValues.otpExpiresAt) {
       throw new Error('OTP not requested or expired');
     }
@@ -148,8 +139,6 @@ export class  AuthService {
 
   // Update your login method to check for email verification
   async login(email: string, password: string) {
-    console.log("Login attempt with email:", email);
-    console.log("Login attempt with password:", password);
     const user = await this.usersRepository.findOne({ where: { email } });
 
     if (!user) {
@@ -189,6 +178,7 @@ export class  AuthService {
 
     return {
       id: user.dataValues.id,
+      uuid: user.dataValues.users_uuid,
       name: user.dataValues.name,
       email: user.dataValues.email,
       provider: user.dataValues.provider,

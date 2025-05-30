@@ -46,7 +46,7 @@ export function addAuditTrailHook(sequelize: Sequelize) {
     }
   });
 
-  sequelize.addHook('afterCreate', async (instance: Model) => {
+  sequelize.addHook('afterCreate', async (instance: Model, options: any) => {
     if (!instance.constructor) return;
     if (ignoreModels.includes(instance.constructor.name)) {
       return;
@@ -57,11 +57,13 @@ export function addAuditTrailHook(sequelize: Sequelize) {
         action: 'create',
         current_data: instance.dataValues,
         previous_data: null,
-      } as AuditTrail);
+        userId: options?.context?.userId ??  null,  // 👈 grab userId from context
+        
+      } as unknown as AuditTrail);
     }
   });
 
-  sequelize.addHook('beforeUpdate', async (instance: Model) => {
+  sequelize.addHook('beforeUpdate', async (instance: Model, options: any) => {
     if (!instance.constructor) return;
     if (ignoreModels.includes(instance.constructor.name)) {
       return;
@@ -72,11 +74,13 @@ export function addAuditTrailHook(sequelize: Sequelize) {
         action: 'update',
         current_data: instance.dataValues,
         previous_data: (instance as any)._previousDataValues,
-      } as AuditTrail);
+        userId: options?.context?.userId ?? null, // ✅ Use the context value
+
+      } as unknown as AuditTrail);
     }
   });
 
-  sequelize.addHook('beforeDestroy', async (instance: Model) => {
+  sequelize.addHook('beforeDestroy', async (instance: Model,options: any) => {
     if (!instance.constructor) return;
     if (ignoreModels.includes(instance.constructor.name)) {
       return;
@@ -87,6 +91,7 @@ export function addAuditTrailHook(sequelize: Sequelize) {
         action: 'delete',
         current_data: null,
         previous_data: instance.dataValues,
+        userId: options?.context?.userId ?? null, // ✅ Use the context value
       } as AuditTrail);
     }
   });

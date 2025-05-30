@@ -25,8 +25,8 @@ export class CustomiseStoreBannerController {
 
   @Delete('image')
   @UseGuards(AuthGuard('jwt'))
-  async deleteImage(@Query('uuid') uuid: string) {
-    return this.customiseStoreBannerService.removeImage(uuid);
+  async deleteImage(@Query('uuid') uuid: string, @Query('userId') userId: string) {
+    return this.customiseStoreBannerService.removeImage(uuid,userId);
   }
 
 }

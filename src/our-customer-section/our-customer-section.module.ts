@@ -7,13 +7,14 @@ import { ourCustomerProvider } from './provider/customer.provider';
 import { storeProvider } from './provider/store.provider';
 import { merchantProvider } from './provider/merchant.provider';
 
+
 @Module({
   imports: [SequelizeModule.forFeature([Testimonial])],
   controllers: [OurCustomerSectionController],
   providers: [OurCustomerSectionService,
     ...ourCustomerProvider,
     ...storeProvider,
-    ...merchantProvider
+    ...merchantProvider,
   ],
 })
 export class OurCustomerSectionModule { }

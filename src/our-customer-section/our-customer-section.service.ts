@@ -4,6 +4,7 @@ import { UpdateOurCustomerSectionDto } from './dto/update-our-customer-section.d
 import { Testimonial } from 'src/database/entity/ourCustomer.entity';
 import { Store } from 'src/database/entity/store.entity';
 import { Merchant } from 'src/database/entity/merchant.entity';
+import { User } from 'src/database/entity/user.entity';
 
 @Injectable()
 export class OurCustomerSectionService {
@@ -14,23 +15,22 @@ export class OurCustomerSectionService {
     private readonly storeRepository: typeof Store,
 
     @Inject('MERCHANT_REPOSITORY')
-    private merchantRepository: typeof Merchant,
-      
+    private readonly merchantRepository: typeof Merchant,
     
   ) { }
 
   async create(data: any): Promise<Testimonial> {
-    const { userId } = data;
+    const { user_id, uuid } = data;
 
-    const store = await this.storeRepository.findOne({ where: { ownerId: userId } });
+    const store = await this.storeRepository.findOne({ where: { ownerId: user_id } });
 
     if (!store) {
-      throw new NotFoundException(`Store with owner ID ${userId} not found.`);
+      throw new NotFoundException(`Store with owner ID ${user_id} not found.`);
     }
 
       // Step 3: Validate merchant
         const merchant = await this.merchantRepository.findOne({
-          where: { userId: userId, storeId: store.id },
+          where: { userId: user_id, storeId: store.id },
         });
     
         if (!merchant) {
@@ -39,12 +39,18 @@ export class OurCustomerSectionService {
           );
         }
 
-    return this.ourCustomerRepository.create({
+    const testimonial: any = await this.ourCustomerRepository.create({
       ...data,
       storeId: store.dataValues.id,
       merchantId: merchant.id
-    }
+    }, 
+    {
+      context: { userId : uuid },
+      individualHooks: true,
+    } as any,
     );
+
+    return testimonial;
   }
 
 
@@ -73,20 +79,30 @@ export class OurCustomerSectionService {
       throw new NotFoundException(`Testimonial with ID ${id} not found.`);
     }
 
-    await testimonial.update({...updateDto});
+    await testimonial.update({...updateDto}, 
+      {
+      context: { userId : updateDto.uuid },
+      individualHooks: true,
+    } as any
+    );
 
     return testimonial;
   }
 
 
-  async remove(id: number): Promise<{ message: string; remaining: any[] }> {
+  async remove(id: number, uuid: string): Promise<{ message: string; remaining: any[] }> {
   const testimonial = await this.ourCustomerRepository.findByPk(id);
 
   if (!testimonial) {
     throw new NotFoundException(`Testimonial with ID ${id} not found.`);
   }
 
-  await testimonial.destroy();
+  await testimonial.destroy(
+    {
+      context: { userId : uuid },
+      individualHooks: true,
+    } as any
+  );
 
   // Fetch remaining testimonials
   const remaining = await this.ourCustomerRepository.findAll();
