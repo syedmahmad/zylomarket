@@ -20,7 +20,8 @@ import { merchantProvider } from 'src/product/Providers/merchant.provider';
 // @ts-ignore
 import { productProvider } from 'src/product/Providers/product.provider';
 // @ts-ignore
-import { userProvider } from './providers/user.provider';
+import { userProvider } from 'src/product/providers/user.provider';
+
 
 
 
