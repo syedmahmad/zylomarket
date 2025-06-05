@@ -56,6 +56,13 @@ export class Store extends Model<Store> {
   })
   contactNumber: string; 
 
+
+     @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  location: string; 
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,

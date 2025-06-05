@@ -7,6 +7,7 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
+  Default,
 } from 'sequelize-typescript';
 import { Store } from './store.entity';
 import { Merchant } from './merchant.entity';
@@ -31,10 +32,9 @@ export class Testimonial extends Model<Testimonial> {
   @BelongsTo(() => Store)
   store: Store;
 
-
   @Column({
     type: DataType.STRING,
-    defaultValue: "What Our Customers Say",
+    defaultValue: 'What Our Customers Say',
   })
   heading: string;
 
@@ -59,6 +59,10 @@ export class Testimonial extends Model<Testimonial> {
 
   @Column(DataType.INTEGER)
   rating: number; // 1-5
+
+  @Default(true)
+  @Column({ type: DataType.BOOLEAN })
+  showOnUI: boolean;
 
   @ForeignKey(() => Merchant) // Foreign key pointing to the Merchant table
   @Column({ type: DataType.INTEGER, allowNull: false })

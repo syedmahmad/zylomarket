@@ -41,7 +41,6 @@ export class ProductService {
       throw new NotFoundException(`Store owner with ID ${userInfo} not found.`);
     }
 
-    console.log('userInfo',userInfo)
     const userId = userInfo.dataValues?.users_uuid ;
 
     const merchantInfo = await this.merchantRepository.findOne({where : {userId: ownerId, storeId: store.id}})
@@ -156,62 +155,94 @@ export class ProductService {
 
   async update(id: number, updateProductDto: any, uuid: string): Promise<Product> {
     const product = await this.findOne(id);
-    
-    // If the product's sale status is being updated, handle that as well
-    const { isSaleOn, salesCampaignId, ...updatedData } = updateProductDto;
-    
-    const userId= uuid;
+    const userId = uuid;
+
+    // Destructure the DTO to separate images and other data
+    const { images, imagesToRemove, ...updatedData } = updateProductDto;
+
     // Update product data
-    // await product.update(updatedData);
-     await product.update(updatedData, {
-    context: { userId },
-    individualHooks: true,
-  });
+    await product.update(updatedData, {
+        context: { userId },
+        individualHooks: true,
+    });
 
+    // Handle image updates if they exist in the DTO
+    if (images || imagesToRemove) {
+        // First remove images that need to be deleted
+        if (imagesToRemove && imagesToRemove.length > 0) {
+            await this.productImageRepository.destroy({
+                where: {
+                    productId: id,
+                    imageUrl: imagesToRemove,
+                },
+                context: { userId },
+                individualHooks: true,
+            }as any);
+        }
+
+        // Then add new images
+        if (images && images.length > 0) {
+            const existingImages = await this.productImageRepository.findAll({
+                where: { productId: id },
+            });
+
+            const existingUrls = existingImages.map(img => img.imageUrl);
+            const newImages = images.filter(img => !existingUrls.includes(img.imageUrl));
+
+            if (newImages.length > 0) {
+                await this.productImageRepository.bulkCreate(
+                    newImages.map(image => ({
+                        productId: id,
+                        imageUrl: image.imageUrl,
+                    })),
+                    {
+                        context: { userId },
+                        individualHooks: true,
+                    }as any
+                );
+            }
+        }
+    }
+
+    // Handle sale status updates (your existing code)
+    const { isSaleOn, salesCampaignId } = updateProductDto;
     if (isSaleOn !== undefined) {
-      if (isSaleOn && salesCampaignId) {
-        // If isSaleOn is true, link the product to a sales campaign
-        const salesCampaign = await this.salesCampaignRepository.findByPk(salesCampaignId);
-        if (!salesCampaign) {
-          throw new NotFoundException(`Sales campaign with ID ${salesCampaignId} not found`);
-        }
+        if (isSaleOn && salesCampaignId) {
+            const salesCampaign = await this.salesCampaignRepository.findByPk(salesCampaignId);
+            if (!salesCampaign) {
+                throw new NotFoundException(`Sales campaign with ID ${salesCampaignId} not found`);
+            }
 
-        // Check if this product is already linked to the campaign to avoid duplicates
-        const existingCampaignProduct = await this.campaignProductRepository.findOne({
-          where: {
-            productId: product.dataValues.id,
-            salesCampaignId,
-          },
-        });
+            const existingCampaignProduct = await this.campaignProductRepository.findOne({
+                where: {
+                    productId: product.dataValues.id,
+                    salesCampaignId,
+                },
+            });
 
-        if (!existingCampaignProduct) {
-          // Create a new link if it doesn't exist
-          await this.campaignProductRepository.create({
-            productId: product.dataValues.id,
-            salesCampaignId,
-            // You can add discountPercentage or salePrice if needed
-          } as CampaignProduct,
-           {
-          context: { userId },
-          individualHooks: true,
-        } as any);
-        // );
+            if (!existingCampaignProduct) {
+                await this.campaignProductRepository.create({
+                    productId: product.dataValues.id,
+                    salesCampaignId,
+                } as CampaignProduct, {
+                    context: { userId },
+                    individualHooks: true,
+                } as any);
+            }
+        } else {
+            await this.campaignProductRepository.destroy({
+                where: {
+                    productId: product.dataValues.id,
+                    salesCampaignId,
+                },
+                context: { userId },
+                individualHooks: true,
+            } as any);
         }
-      } else {
-        // If the sale is being turned off, remove the link from CampaignProduct
-        await this.campaignProductRepository.destroy({
-          where: {
-            productId: product.dataValues.id,
-            salesCampaignId,
-          },
-          context: { userId },
-          individualHooks: true,
-        } as any);
-      }
     }
 
     return product;
-  }
+}
 
   async remove(id: number, uuid: string): Promise<{ message: string }> {
     const product = await this.findOne(id);

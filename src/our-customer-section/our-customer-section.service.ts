@@ -5,6 +5,7 @@ import { Testimonial } from 'src/database/entity/ourCustomer.entity';
 import { Store } from 'src/database/entity/store.entity';
 import { Merchant } from 'src/database/entity/merchant.entity';
 import { User } from 'src/database/entity/user.entity';
+import { UpdateVisibilityDto } from './dto/updateVisibility.dto';
 
 @Injectable()
 export class OurCustomerSectionService {
@@ -135,4 +136,18 @@ export class OurCustomerSectionService {
     }
     
 
+    async updateVisibility(id: number, updateVisibilityDto: UpdateVisibilityDto) {
+  const record = await this.ourCustomerRepository.findOne({
+      where: { storeId: id},
+    });
+
+
+  if (!record) {
+    throw new NotFoundException('Record not found');
+  }
+
+  const updatedRecord = await record.update({ showOnUI: updateVisibilityDto.showOnUI });
+
+  return { message: 'Visibility updated successfully', data: updatedRecord };
+}
 }

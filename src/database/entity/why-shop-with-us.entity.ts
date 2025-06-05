@@ -9,6 +9,7 @@ import {
   HasMany,
   PrimaryKey,
   AutoIncrement,
+  Default,
 } from 'sequelize-typescript';
 import { Store } from './store.entity';
 import { WhyShopFeature } from './why-shop-feature.entity';
@@ -33,6 +34,11 @@ export class WhyShopSection extends Model<WhyShopSection> {
 
   @Column({ type: DataType.TEXT, allowNull: false })
   description: string;
+
+
+    @Default(true)
+    @Column({ type: DataType.BOOLEAN })
+    showOnUI: boolean;
 
   @ForeignKey(() => Store)
   @Column({ type: DataType.INTEGER, allowNull: false })

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { WhyShopWithUsService } from './why-shop-with-us.service';
 import { CreateWhyShopWithUsDto } from './dto/create-why-shop-with-us.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateVisibilityDto } from './dto/UpdateVisibilityDto';
 
 @Controller('why-shop-with-us')
 export class WhyShopWithUsController {
@@ -22,5 +23,14 @@ export class WhyShopWithUsController {
   findOne(@Param('id') id: string) {
     return this.whyShopWithUsService.findOne(+id);
   }
+
+@Patch('visibility/:id')
+@UseGuards(AuthGuard('jwt'))
+updateVisibility(
+  @Param('id') id: string,
+  @Body() updateVisibilityDto: UpdateVisibilityDto,
+) {
+  return this.whyShopWithUsService.updateVisibility(+id, updateVisibilityDto);
+}
 
 }

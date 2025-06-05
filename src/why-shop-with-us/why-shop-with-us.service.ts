@@ -5,6 +5,7 @@ import { WhyShopSection } from 'src/database/entity/why-shop-with-us.entity';
 import { WhyShopFeature } from 'src/database/entity/why-shop-feature.entity';
 import { Sequelize } from 'sequelize-typescript';
 import { Store } from 'src/database/entity/store.entity';
+import { UpdateVisibilityDto } from './dto/UpdateVisibilityDto';
 
 @Injectable()
 export class WhyShopWithUsService {
@@ -83,14 +84,6 @@ export class WhyShopWithUsService {
   }
 
   async findOne(id: number) {
-
-
-    // const store = await this.storeRepository.findOne({ where: { ownerId: id } });
-
-
-    // if (!store) {
-    //   throw new NotFoundException(`Store with owner ID ${id} not found.`);
-    // }
     const section = await this.whyShopWithUsRepository.findOne({
       where: { storeId: id},
       include: [WhyShopFeature],
@@ -102,5 +95,16 @@ export class WhyShopWithUsService {
 
     return section;
   }
+
+
+  async updateVisibility(id: number, updateVisibilityDto: UpdateVisibilityDto) {
+  const record = await this.whyShopWithUsRepository.findOne({
+      where: { storeId: id},
+    });
+
+  const updatedRecord = await record?.update({ showOnUI: updateVisibilityDto.showOnUI });
+
+  return { message: 'Visibility updated successfully', data: updatedRecord };
+}
 
 }
