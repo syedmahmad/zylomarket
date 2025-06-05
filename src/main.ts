@@ -18,7 +18,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
     });
 
      app.useGlobalInterceptors(new LoggingInterceptor());
-    await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+    await app.listen(process.env.PORT ?? 3000);
 
   }
   bootstrap();
