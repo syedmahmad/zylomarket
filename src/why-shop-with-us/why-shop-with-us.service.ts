@@ -21,10 +21,11 @@ export class WhyShopWithUsService {
 
   ) { }
 
-  async createOrUpdate(dto: any) {
+   async createOrUpdate(dto: any) {
     const { userId, sectionTitle, description, features = [], uuid } = dto;
+    console.log('userId',userId)
   
-    // Step 1: Validate store existence
+    // Validate store existence
     const store = await this.storeRepository.findOne({ where: { ownerId: userId } });
     if (!store?.dataValues?.id) {
       throw new NotFoundException(`Store with owner ID ${userId} not found.`);
@@ -32,42 +33,51 @@ export class WhyShopWithUsService {
   
     const storeId = store.dataValues.id;
   
-    // Step 2: Check if a section already exists for this store
-    let section: any = await this.whyShopWithUsRepository.findOne({ where: { storeId } });
+    // Check if section exists
+    let section: any = await this.whyShopWithUsRepository.findOne({ 
+      where: { storeId },
+      include: [WhyShopFeature]
+    });
   
     if (section) {
-      // Step 3a: Update existing section
+      // Update existing section
       await section.update({ sectionTitle, description }, {
-      context: { userId: uuid },
-      individualHooks: true,
-    } as any);
+        context: { userId: uuid },
+        individualHooks: true,
+      } as any);
     } else {
-      // Step 3b: Create new section
+      // Create new section
       section = await this.whyShopWithUsRepository.create({
         sectionTitle,
         description,
         storeId,
-      } as WhyShopSection,
-    {
-      context: { userId },
-      individualHooks: true,
-    } as any,);
+      } as WhyShopSection, {
+        context: { userId },
+        individualHooks: true,
+      } as any);
     }
   
-    // Step 4: Upsert features (simplest approach is delete & insert fresh)
+    // Handle features with icon URLs from frontend
     if (features.length) {
+      // Delete existing features
       await this.whyShopFeaturesRepository.destroy({ where: { sectionId: section.id } });
   
-      const newFeatures = features.map((feature) => ({
-        ...feature,
+      // Create new features with icon URLs
+      const newFeatures = features.map(feature => ({
+        title: feature.title,
+        description: feature.description,
+        icon: feature.icon || null, // Use the URL provided by frontend
         sectionId: section.id,
       }));
   
       await this.whyShopFeaturesRepository.bulkCreate(newFeatures);
     }
   
-    // Step 5: Return updated section with details
-    const sectionDetails = await this.whyShopWithUsRepository.findByPk(section.id);
+    // Return updated section with features
+    const sectionDetails = await this.whyShopWithUsRepository.findByPk(section.id, {
+      include: [WhyShopFeature],
+    });
+    
     if (!sectionDetails) {
       throw new NotFoundException(`Section with ID ${section.id} not found.`);
     }

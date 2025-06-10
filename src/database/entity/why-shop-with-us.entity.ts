@@ -15,7 +15,7 @@ import { Store } from './store.entity';
 import { WhyShopFeature } from './why-shop-feature.entity';
 
 
-@Table({ tableName: 'why_shop_sections' })
+@Table({ tableName: 'why_shop_sections' , timestamps: true,})
 export class WhyShopSection extends Model<WhyShopSection> {
 
   @PrimaryKey

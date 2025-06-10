@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript';
 import { WhyShopSection } from './why-shop-with-us.entity';
 
-@Table({ tableName: 'why_shop_features' })
+@Table({ tableName: 'why_shop_features', timestamps: true, })
 export class WhyShopFeature extends Model<WhyShopFeature> {
   @Column({
     type: DataType.UUID,
@@ -29,6 +29,10 @@ export class WhyShopFeature extends Model<WhyShopFeature> {
 
   @Column({ type: DataType.TEXT, allowNull: false })
   description: string;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  icon: string;  // This will store the URL/path to the icon
+
 
   @ForeignKey(() => WhyShopSection)
   @Column({ type: DataType.INTEGER, allowNull: false })

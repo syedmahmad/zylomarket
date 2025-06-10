@@ -136,18 +136,62 @@ export class OurCustomerSectionService {
     }
     
 
-    async updateVisibility(id: number, updateVisibilityDto: UpdateVisibilityDto) {
-  const record = await this.ourCustomerRepository.findOne({
-      where: { storeId: id},
-    });
 
-
-  if (!record) {
-    throw new NotFoundException('Record not found');
+async updateVisibility(
+  updateVisibilityDto: UpdateVisibilityDto,
+  userId: number, // Make sure to pass this in the controller
+) {
+  const defaultHeading = 'What Our Customers Say';
+  const defaultSubHeading = "Don't just take our word for it. Here's what our customers have to say about their shopping experience.";
+  // Step 1: Find the store
+  const store = await this.storeRepository.findOne({ where: { ownerId: userId } });
+  if (!store) {
+    throw new NotFoundException(`Store with ID ${userId} not found.`);
   }
 
-  const updatedRecord = await record.update({ showOnUI: updateVisibilityDto.showOnUI });
+  // Step 2: Validate merchant
+  const merchant = await this.merchantRepository.findOne({
+    where: { storeId: store?.dataValues.id },
+  });
+  if (!merchant) {
+    throw new NotFoundException(`Merchant not found in store ${userId}.`);
+  }
 
-  return { message: 'Visibility updated successfully', data: updatedRecord };
+  // Step 3: Find or create the record
+  const [record, created] = await this.ourCustomerRepository.findOrCreate({
+    where: { storeId: store?.dataValues.id },
+    defaults: {
+      storeId:store?.dataValues.id,
+      merchantId: merchant.id,
+      showOnUI: updateVisibilityDto.showOnUI,
+      heading: defaultHeading,
+      subHeading: defaultSubHeading,
+    } as any,
+  });
+
+  // Step 4: Update if it was already created
+  if (!created) {
+    await record.update(
+      {
+        showOnUI: updateVisibilityDto.showOnUI,
+        heading: defaultHeading,
+        subHeading: defaultSubHeading,
+        merchantId: merchant.id,
+      },
+      {
+        context: { userId: userId },
+        individualHooks: true,
+      } as any,
+    );
+  }
+
+  return {
+    message: created
+      ? 'Visibility record created successfully'
+      : 'Visibility record updated successfully',
+    data: record,
+  };
 }
+
+
 }

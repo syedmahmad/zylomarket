@@ -57,13 +57,12 @@ export class OurCustomerSectionController {
 
   @Patch('visibility/:id')
   @UseGuards(AuthGuard('jwt'))
-  updateVisibility(
-    @Param('id') id: string,
-    @Body() updateVisibilityDto: UpdateVisibilityDto,
-  ) {
-    return this.ourCustomerSectionService.updateVisibility(
-      +id,
-      updateVisibilityDto,
-    );
-  }
+  async updateVisibility(
+  @Body() updateVisibilityDto: UpdateVisibilityDto,
+  @Param('id') userId: number,
+) {
+  console.log('userId', userId);
+  return this.ourCustomerSectionService.updateVisibility(updateVisibilityDto, +userId);
+}
+
 }
