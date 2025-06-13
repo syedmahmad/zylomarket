@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
@@ -14,6 +15,8 @@ import { Store } from 'src/database/entity/store.entity';
 import { Merchant } from 'src/database/entity/merchant.entity';
 import { EmailService } from 'src/email-verification/email-verification.service';
 import { ConflictException } from '@nestjs/common';
+import { addHours } from 'date-fns';
+import { DateTime } from 'luxon';
 
 
 @Injectable()
@@ -300,8 +303,78 @@ export class  AuthService {
     };
   }
 
-  // old login method which is workign fine 
- 
+
+
+
+  async requestPasswordReset(email: string) {
+  const user = await this.usersRepository.findOne({ where: { email } });
+
+  if (!user) {
+    return { message: 'If that email exists, a reset link has been sent.' };
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+   const expires = DateTime.utc().plus({ hours: 1 }).toISO()
+
+  await user.update({ resetToken: token, resetTokenExpiresAt: expires });
+
+  const resetLink = `https://www.zylospace.com/reset-password?token=${token}&email=${encodeURIComponent(user.dataValues?.email)}`;
+
+  try {
+    await this.emailService.sendMail({
+      to: user.dataValues.email,
+      subject: 'Password Reset',
+      html: `Click <a href="${resetLink}">here</a> to reset your password. This link is valid for 1 hour.`,
+    });
+  } catch (error) {
+    console.error(`Failed to send reset email to ${user.email}`, error);
+    // Do not throw to avoid email enumeration
+  }
+
+  return {
+    statusCode: 200,
+    success: true,
+    message: 'If that email exists, a reset link has been sent.',
+  };
+}
+
+
+async resetPassword(dto: any): Promise<{ message: string }> {
+  const { email, resetToken, password } = dto;
+
+  const user = await this.usersRepository.findOne({ where: { email } });
+  if (!user) {
+    throw new BadRequestException('User not found.');
+  }
+
+  await user.reload();
+
+  const storedToken = user.getDataValue('resetToken');
+  const expiresAt = user.getDataValue('resetTokenExpiresAt');
+
+  const now = DateTime.utc();
+   const expiry = DateTime.fromISO(expiresAt).toUTC();
+
+  const isTokenInvalid =
+    !storedToken ||
+    storedToken !== resetToken ||
+    expiry < now;
+
+  if (isTokenInvalid) {
+    throw new BadRequestException('Invalid or expired reset token.');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await user.update({
+    password: hashedPassword,
+    resetToken: null,
+    resetTokenExpiresAt: null,
+  }as any);
+
+  return { message: 'Password reset successfully.' };
+}
+
 
   private sanitizeUser(user: User) {
     const { password, ...safeUser } = user.toJSON();

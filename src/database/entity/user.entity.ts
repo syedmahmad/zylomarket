@@ -52,4 +52,12 @@ otpExpiresAt: Date;
 
 @Column({ defaultValue: false })
 emailVerified: boolean;
+
+
+@Column({ allowNull: true })
+resetToken: string;
+
+@Column({ allowNull: true })
+resetTokenExpiresAt: Date;
+
 }

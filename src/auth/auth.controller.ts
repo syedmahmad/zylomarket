@@ -2,6 +2,8 @@ import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { OAuth2Client } from 'google-auth-library';
 import { RegisterDto } from './dto/register-user.dto';
+import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -64,7 +66,6 @@ async resendOtp(@Body('email') email: string) {
 @Post('verify-email')
 async verifyEmail(@Body() body: { email: string; otp: string }) {
   const { email, otp } = body;
-  console.log("Email verification request:", { email, otp });
 
   if (!email || !otp) {
     throw new BadRequestException('Email and OTP are required');
@@ -72,6 +73,18 @@ async verifyEmail(@Body() body: { email: string; otp: string }) {
 
   const result = await this.authService.verifyEmail(email, otp);
   return result;
+}
+
+// password reset rout..
+@Post('forgot-password')
+async forgotPassword(@Body() body: any) {
+  return this.authService.requestPasswordReset(body.email);
+}
+
+
+@Post('reset-password')
+async resetPassword(@Body() dto: ResetPasswordDto) {
+  return this.authService.resetPassword(dto);
 }
 
 

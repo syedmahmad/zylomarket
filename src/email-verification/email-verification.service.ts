@@ -18,6 +18,37 @@ export class EmailService {
     });
   }
 
+
+
+  /**
+   * Send a generic email
+   */
+  async sendMail({
+    to,
+    subject,
+    html,
+    text,
+  }: {
+    to: string;
+    subject: string;
+    html?: string;
+    text?: string;
+  }): Promise<void> {
+    try {
+      await this.transporter.sendMail({
+        from: 'team@zylospace.com',
+        to,
+        subject,
+        html,
+        text,
+      });
+    } catch (error) {
+      console.error(`Error sending email to ${to}:`, error);
+      throw new Error('Failed to send email');
+    }
+  }
+
+  
   async sendOTP(email: string, otp: string): Promise<void> {
     const mailOptions = {
       from: 'team@zylospace.com',
