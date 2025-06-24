@@ -5,7 +5,7 @@ module.exports = {
     const tableName = 'cart_items';
     const columnName = 'guestId';
 
-    // Check if column already exists
+    // Step 1: Check if column exists
     const columnExists = await queryInterface.sequelize.query(
       `
       SELECT column_name
@@ -20,10 +20,25 @@ module.exports = {
     );
 
     if (columnExists.length === 0) {
+      // Step 2: Add column as nullable
       await queryInterface.addColumn(tableName, columnName, {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         comment: 'Stores guest identifier for unauthenticated users',
+      });
+
+      // Step 3: Optional — Set default guestId for existing records
+      // You can skip this if you plan to handle nulls in your app
+      await queryInterface.sequelize.query(`
+        UPDATE "${tableName}"
+        SET "${columnName}" = 'anonymous'
+        WHERE "${columnName}" IS NULL
+      `);
+
+      // Step 4: Change column to NOT NULL
+      await queryInterface.changeColumn(tableName, columnName, {
+        type: Sequelize.STRING,
+        allowNull: false,
       });
     }
   },
