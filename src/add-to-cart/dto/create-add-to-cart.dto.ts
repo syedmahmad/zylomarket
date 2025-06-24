@@ -1,9 +1,9 @@
 // dto/create-add-to-cart.dto.ts
-import { IsInt, Min } from 'class-validator';
+import { IsInt, Min, IsUUID, IsString } from 'class-validator';
 
 export class CreateAddToCartDto {
-  @IsInt()
-  userId: number;
+  @IsUUID()
+  guestId: string;
 
   @IsInt()
   productId: number;

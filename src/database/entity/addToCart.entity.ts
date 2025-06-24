@@ -48,4 +48,8 @@ export class CartItem extends Model {
 
   @BelongsTo(() => Merchant)
   merchant: Merchant;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  guestId: string;
+
 }
