@@ -27,12 +27,13 @@ export class ProductController {
   }
 
   @Get()
-  findAllByStore(@Query('id') id: string) {
-    return this.productService.findAll(+id);
+  findAllByStore(@Query('domain') domain: string) {
+    console.log('id am here................................', domain);
+    return this.productService.findAll(domain);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string) {  
     return this.productService.findOne(+id);
   }
 

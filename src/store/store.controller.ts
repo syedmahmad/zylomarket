@@ -13,9 +13,9 @@ export class StoreController {
     return this.storeService.findOne(+id);
   }
 
-  @Get('/user/:id')
-  findStoreInfoForUserView(@Param('id') id: string) {
-    return this.storeService.findStoreInfoForUserView(+id);
+  @Get('/user/:domain')
+  findStoreInfoForUserView(@Param('domain') domain: string) {
+    return this.storeService.findStoreInfoForUserView(domain);
   }
 
 

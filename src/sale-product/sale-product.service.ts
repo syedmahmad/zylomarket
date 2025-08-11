@@ -20,18 +20,20 @@ export class SaleProductService {
   ) { }
 
 
-  async getSaleProducts(id: number) {
-    // const store = await this.storeRepository.findOne({
-    //   where: { ownerId: id },
-    // });
-    // if (!store) {
-    //   throw new NotFoundException(`Store with ID ${id} not found`);
-    // }
+  async getSaleProducts(domain: string) {
+
+    const storeDomain =  domain.concat('.zylospace.com')
+    const store = await this.storeRepository.findOne({
+      where: { domain: storeDomain },
+    });
+    if (!store) {
+      throw new NotFoundException(`Store with domain ${storeDomain} not found`);
+    }
 
     const productsOnSale = await this.productRepository.findAll({
       where: {
         isOnSale: true,
-        storeId: id,
+        storeId: store.dataValues.id,
       },
       include: { all: true },
     });
@@ -44,7 +46,7 @@ export class SaleProductService {
     // const storeId = productsOnSale[0].dataValues.storeId;
 
     const saleCampaigns = await this.salesCampaignRepository.findAll({
-      where: { storeId: id },
+      where: { storeId: store.dataValues.id, },
       include: { all: true },
     });
 

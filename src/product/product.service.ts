@@ -129,14 +129,23 @@ export class ProductService {
   }
 
   
-async findAll(id: number): Promise<{ products: Product[]; salesInfo: SalesCampaign | null }> {
+async findAll(domain: string): Promise<{ products: Product[]; salesInfo: SalesCampaign | null }> {
+
+  const stroeDomain = domain.concat('.zylospace.com');
+
+    const store = await this.storeRepository.findOne({
+      where: { domain: stroeDomain },
+    });
+    if (!store) {
+      throw new NotFoundException(`Store with domain ${stroeDomain} not found`);
+    }
 
     const products =  await this.productRepository.findAll({
-      where: { storeId: id },
+      where: { storeId: store.dataValues.id },
       include: { all: true,  },
     });
 
-    const salesInfo = await this.salesCampaignRepository.findOne({where: {storeId: id}});
+    const salesInfo = await this.salesCampaignRepository.findOne({where: {storeId: store.dataValues.id}});
     console.log('salesInfo',salesInfo)
 
     return {

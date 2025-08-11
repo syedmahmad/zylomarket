@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOurCustomerSectionDto } from './dto/create-our-customer-section.dto';
 import { UpdateOurCustomerSectionDto } from './dto/update-our-customer-section.dto';
 import { Testimonial } from 'src/database/entity/ourCustomer.entity';
@@ -55,15 +55,19 @@ export class OurCustomerSectionService {
   }
 
 
-  async findOne(id: number) {
+  async findOne(domain: string) {
 
-    // const store = await this.storeRepository.findOne({ where: { ownerId: id } });
 
-    // if (!store) {
-    //   throw new NotFoundException(`Store with owner ID ${id} not found.`);
-    // }
+     const storeDomain = domain.concat('.zylospace.com');
+      const storeInfo = await this.storeRepository.findOne({
+        where: { domain: storeDomain }
+      });
+    
+      if (!storeInfo) {
+        throw new BadRequestException(`Store with owner domain ${domain} not found.`);
+      }
 
-    const customersData = await this.ourCustomerRepository.findAll({ where: { storeId: id} })
+    const customersData = await this.ourCustomerRepository.findAll({ where: { storeId: storeInfo.dataValues.id} })
 
     if (!customersData) {
       return []

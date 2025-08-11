@@ -9,30 +9,8 @@ export class SaleProductController {
 
 
   @Get()
-  async getSaleProducts(@Query('id') id: string) {
-    return this.saleProductService.getSaleProducts(+id);
+  async getSaleProducts(@Query('domain') domain: string) {
+    return this.saleProductService.getSaleProducts(domain);
   }
-  
-  
-  // @Post()
-  // create(@Body() createSaleProductDto: CreateSaleProductDto) {
-  //   return this.saleProductService.create(createSaleProductDto);
-  // }
 
-  
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.saleProductService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSaleProductDto: UpdateSaleProductDto) {
-  //   return this.saleProductService.update(+id, updateSaleProductDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.saleProductService.remove(+id);
-  // }
 }

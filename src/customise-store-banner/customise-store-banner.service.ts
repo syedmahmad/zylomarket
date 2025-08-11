@@ -72,41 +72,23 @@ export class CustomiseStoreBannerService {
   }
 
 
-  async findOne(id: number) {
+  async findOne(domain: string) {
 
-    // const store = await this.storeRepository.findOne({
-    //   where: { ownerId: id },
-    // });
-
-
-    // if (!store) {
-    //   throw new NotFoundException(`Store with ID ${id} not found`);
-    // }
+    const storeDomain = domain.concat('.zylospace.com');
+    const store = await this.storeRepository.findOne({
+      where: { domain: storeDomain },
+    });
 
 
-    const banner = await this.bannerModel.findOne({where: { storeId: id }});
+    if (!store) {
+      throw new NotFoundException(`Store with ID ${storeDomain} not found`);
+    }
+
+
+    const banner = await this.bannerModel.findOne({where: { storeId: store.dataValues.id }});
     if (!banner) [];
     return banner;
   }
-
-  // async removeImage(uuid: string): Promise<{ message: string }> {
-  //   const banner = await this.bannerModel.findOne({
-  //     where: { customise_banner_uuid: uuid },
-  //   });
-  
-  //   if (!banner) {
-  //     throw new NotFoundException('Banner not found');
-  //   }
-  
-
-  //   await this.bannerModel.update(
-  //     // @ts-ignore
-  //     { imageUrl: null },
-  //     { where: { customise_banner_uuid: uuid } },
-  //   );
-  
-  //   return { message: 'Image URL removed from banner successfully' };
-  // }
 
   async removeImage(uuid: string, userId: string): Promise<{ message: string }> {
   const banner = await this.bannerModel.findOne({
@@ -131,7 +113,4 @@ export class CustomiseStoreBannerService {
 
   return { message: 'Image URL removed from banner successfully' };
 }
-
-  
-
 }

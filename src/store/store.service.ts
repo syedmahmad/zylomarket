@@ -33,13 +33,15 @@ export class StoreService {
 
 
 
- async findStoreInfoForUserView(id: number) {
+ async findStoreInfoForUserView(domain: string) {
+
+  const storeDomain = domain.concat('.zylospace.com');
   const storeInfo = await this.storeRepository.findOne({
-    where: { id: id }
+    where: { domain: storeDomain }
   });
 
   if (!storeInfo) {
-    throw new BadRequestException(`Store with owner ID ${id} not found.`);
+    throw new BadRequestException(`Store with owner ID ${domain} not found.`);
   }
 
   return storeInfo; // now includes storeInfo.owner

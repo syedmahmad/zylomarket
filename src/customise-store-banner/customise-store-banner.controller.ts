@@ -19,8 +19,8 @@ export class CustomiseStoreBannerController {
 
 
   @Get()
-  findOne(@Query('id') id: string) {
-    return this.customiseStoreBannerService.findOne(+id);
+  findOne(@Query('domain') domain: string) {
+    return this.customiseStoreBannerService.findOne(domain);
   }
 
   @Delete('image')

@@ -60,8 +60,18 @@ export class StoreThemeService {
    * Finds the theme by store ID
    * @param storeId 
    */
-  async findByStore(storeId: number): Promise<StoreTheme> {
-    const theme = await this.storeThemeModelRepository.findOne({ where: { storeId } });
+  async findByStore(domain: string): Promise<StoreTheme> {
+
+
+
+    const storDomain = domain.concat('.zylospace.com');
+    const store = await this.storeRepository.findOne({ where: { domain: storDomain } });
+    if (!store) {
+      throw new NotFoundException('Store not found for this user');
+    }
+
+
+    const theme = await this.storeThemeModelRepository.findOne({ where: { storeId: store.dataValues.id } });
 
     const defaultThemeValue: any = {
     themeId: "light",

@@ -34,9 +34,9 @@ export class StoreThemeController {
   /**
    * Get the theme by storeId
    */
-  @Get(':storeId')
-  async findByStore(@Param('storeId') storeId: string) {
-    return this.storeThemeService.findByStore(+storeId);
+  @Get(':domain')
+  async findByStore(@Param('domain') domain: string) {
+    return this.storeThemeService.findByStore(domain);
   }
 
   /**

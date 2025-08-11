@@ -27,9 +27,9 @@ export class OurCustomerSectionController {
     return this.ourCustomerSectionService.create(createOurCustomerSectionDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ourCustomerSectionService.findOne(+id);
+  @Get(':domain')
+  findOne(@Param('domain') domain: string) {
+    return this.ourCustomerSectionService.findOne(domain);
   }
 
   @Patch(':id')
