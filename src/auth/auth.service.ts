@@ -4,7 +4,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -18,10 +17,9 @@ import { ConflictException } from '@nestjs/common';
 import { addHours } from 'date-fns';
 import { DateTime } from 'luxon';
 
-
 @Injectable()
-export class  AuthService {
-    private readonly OTP_EXPIRY_MINUTES = 5;
+export class AuthService {
+  private readonly OTP_EXPIRY_MINUTES = 5;
 
   constructor(
     @Inject('USER_REPOSITORY')
@@ -33,18 +31,18 @@ export class  AuthService {
     private jwtService: JwtService,
     // injecting the email service...
     private emailService: EmailService,
-
   ) {}
 
-
-   private generateOTP(): string {
+  private generateOTP(): string {
     return crypto.randomInt(100000, 999999).toString();
   }
 
   private async sendAndSaveOTP(user: User): Promise<void> {
     const otp = this.generateOTP();
     const otpExpiresAt = new Date();
-    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + this.OTP_EXPIRY_MINUTES);
+    otpExpiresAt.setMinutes(
+      otpExpiresAt.getMinutes() + this.OTP_EXPIRY_MINUTES,
+    );
 
     await user.update({
       otpCode: await bcrypt.hash(otp, 10), // Hash the OTP before storing
@@ -55,13 +53,11 @@ export class  AuthService {
     await this.emailService.sendOTP(user.dataValues.email, otp);
   }
 
-
   async register(name: string, email: string, password: string) {
-
     const existing = await this.usersRepository.findOne({ where: { email } });
-    if (existing) throw new ConflictException('User with this email already exists');
+    if (existing)
+      throw new ConflictException('User with this email already exists');
 
-    
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await this.usersRepository.create({
@@ -73,25 +69,25 @@ export class  AuthService {
 
     await this.sendAndSaveOTP(user);
 
-
     const storeInfo = await this.createDefaultStoreForUser(user);
 
-    await this.insertInfoInMerchantTable(user, storeInfo)
+    await this.insertInfoInMerchantTable(user, storeInfo);
 
     // return user;
     return {
-  message: 'OTP sent to email',
-  email: user.email,
-  nextStep: 'verify-otp',
-}
-
+      message: 'OTP sent to email',
+      email: user.email,
+      nextStep: 'verify-otp',
+    };
   }
 
-// #new code region
-  async verifyEmail(email: string, otp: string): Promise<{ user: any; token: string }> {
+  // #new code region
+  async verifyEmail(
+    email: string,
+    otp: string,
+  ): Promise<{ user: any; token: string }> {
     const user = await this.usersRepository.findOne({ where: { email } });
 
-    
     if (!user) {
       throw new Error('User not found');
     }
@@ -155,8 +151,10 @@ export class  AuthService {
       );
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.dataValues.password);
-    console.log("Password check:",isPasswordValid)
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.dataValues.password,
+    );
     if (!isPasswordValid) {
       throw new HttpException(
         {
@@ -228,7 +226,7 @@ export class  AuthService {
   //     token: this.generateToken(user),
   //   };
   // }
-// #endregion
+  // #endregion
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersRepository.findOne({ where: { email } });
     if (user && (await bcrypt.compare(pass, user.password))) {
@@ -288,14 +286,16 @@ export class  AuthService {
     if (!existingStore) {
       await this.createDefaultStoreForUser(user);
     }
-    const storeInfo = await this.storeRepository.findOne({ where: { ownerId: user.id } });
-    if(!storeInfo) {
+    const storeInfo = await this.storeRepository.findOne({
+      where: { ownerId: user.id },
+    });
+    if (!storeInfo) {
       console.log(`No store found for user with id ${user.id}`);
-      return; }
+      return;
+    }
     await this.insertInfoInMerchantTable(user, storeInfo);
 
     const sanitizedUser = this.sanitizeUser(user);
-
 
     return {
       user: sanitizedUser,
@@ -303,78 +303,71 @@ export class  AuthService {
     };
   }
 
-
-
-
   async requestPasswordReset(email: string) {
-  const user = await this.usersRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({ where: { email } });
 
-  if (!user) {
-    return { message: 'If that email exists, a reset link has been sent.' };
+    if (!user) {
+      return { message: 'If that email exists, a reset link has been sent.' };
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = DateTime.utc().plus({ hours: 1 }).toISO();
+
+    await user.update({ resetToken: token, resetTokenExpiresAt: expires });
+
+    const resetLink = `https://www.zylospace.com/reset-password?token=${token}&email=${encodeURIComponent(user.dataValues?.email)}`;
+
+    try {
+      await this.emailService.sendMail({
+        to: user.dataValues.email,
+        subject: 'Password Reset',
+        html: `Click <a href="${resetLink}">here</a> to reset your password. This link is valid for 1 hour.`,
+      });
+    } catch (error) {
+      console.error(`Failed to send reset email to ${user.email}`, error);
+      // Do not throw to avoid email enumeration
+    }
+
+    return {
+      statusCode: 200,
+      success: true,
+      message: 'If that email exists, a reset link has been sent.',
+    };
   }
 
-  const token = crypto.randomBytes(32).toString('hex');
-   const expires = DateTime.utc().plus({ hours: 1 }).toISO()
+  async resetPassword(dto: any): Promise<{ message: string }> {
+    const { email, resetToken, password } = dto;
 
-  await user.update({ resetToken: token, resetTokenExpiresAt: expires });
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
 
-  const resetLink = `https://www.zylospace.com/reset-password?token=${token}&email=${encodeURIComponent(user.dataValues?.email)}`;
+    await user.reload();
 
-  try {
-    await this.emailService.sendMail({
-      to: user.dataValues.email,
-      subject: 'Password Reset',
-      html: `Click <a href="${resetLink}">here</a> to reset your password. This link is valid for 1 hour.`,
-    });
-  } catch (error) {
-    console.error(`Failed to send reset email to ${user.email}`, error);
-    // Do not throw to avoid email enumeration
+    const storedToken = user.getDataValue('resetToken');
+    const expiresAt = user.getDataValue('resetTokenExpiresAt');
+
+    const now = DateTime.utc();
+    const expiry = DateTime.fromISO(expiresAt).toUTC();
+
+    const isTokenInvalid =
+      !storedToken || storedToken !== resetToken || expiry < now;
+
+    if (isTokenInvalid) {
+      throw new BadRequestException('Invalid or expired reset token.');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await user.update({
+      password: hashedPassword,
+      resetToken: null,
+      resetTokenExpiresAt: null,
+    } as any);
+
+    return { message: 'Password reset successfully.' };
   }
-
-  return {
-    statusCode: 200,
-    success: true,
-    message: 'If that email exists, a reset link has been sent.',
-  };
-}
-
-
-async resetPassword(dto: any): Promise<{ message: string }> {
-  const { email, resetToken, password } = dto;
-
-  const user = await this.usersRepository.findOne({ where: { email } });
-  if (!user) {
-    throw new BadRequestException('User not found.');
-  }
-
-  await user.reload();
-
-  const storedToken = user.getDataValue('resetToken');
-  const expiresAt = user.getDataValue('resetTokenExpiresAt');
-
-  const now = DateTime.utc();
-   const expiry = DateTime.fromISO(expiresAt).toUTC();
-
-  const isTokenInvalid =
-    !storedToken ||
-    storedToken !== resetToken ||
-    expiry < now;
-
-  if (isTokenInvalid) {
-    throw new BadRequestException('Invalid or expired reset token.');
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await user.update({
-    password: hashedPassword,
-    resetToken: null,
-    resetTokenExpiresAt: null,
-  }as any);
-
-  return { message: 'Password reset successfully.' };
-}
-
 
   private sanitizeUser(user: User) {
     const { password, ...safeUser } = user.toJSON();
@@ -392,25 +385,20 @@ async resetPassword(dto: any): Promise<{ message: string }> {
     return this.jwtService.sign(payload);
   }
 
-/**
- * create entry in merchant table as user will be created we will be adding user id and store id in the merchant table.
- * for later use.
- */
+  /**
+   * create entry in merchant table as user will be created we will be adding user id and store id in the merchant table.
+   * for later use.
+   */
 
-private async insertInfoInMerchantTable (user: User, store: Store) {
-  return this.merchantRepository.create({
-    userId: user.id,
-    storeId: store.id,
-    totalSalesCount: 0,
-    totalSalesValue: 0,
-    totalProductsSold: 0,
-  }as Merchant)
-}
-
-
-
-
-
+  private async insertInfoInMerchantTable(user: User, store: Store) {
+    return this.merchantRepository.create({
+      userId: user.id,
+      storeId: store.id,
+      totalSalesCount: 0,
+      totalSalesValue: 0,
+      totalProductsSold: 0,
+    } as Merchant);
+  }
 
   /**
    * Creates a default store entry for the user
@@ -422,8 +410,6 @@ private async insertInfoInMerchantTable (user: User, store: Store) {
       description: `Store owned by ${user.dataValues.name}`,
       ownerId: user.id,
       domain,
-    }as Store);
+    } as Store);
   }
 }
-
-

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CustomiseStoreBannerService } from './customise-store-banner.service';
 import { CreateCustomiseStoreBannerDto } from './dto/create-customise-store-banner.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,7 +16,9 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('customise-store-banner')
 export class CustomiseStoreBannerController {
-  constructor(private readonly customiseStoreBannerService: CustomiseStoreBannerService) { }
+  constructor(
+    private readonly customiseStoreBannerService: CustomiseStoreBannerService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
@@ -14,9 +26,16 @@ export class CustomiseStoreBannerController {
     @Query('id') id: string,
     @Body() createCustomiseStoreBannerDto: CreateCustomiseStoreBannerDto,
   ) {
-    return this.customiseStoreBannerService.create(+id, createCustomiseStoreBannerDto);
+    return this.customiseStoreBannerService.create(
+      id,
+      createCustomiseStoreBannerDto,
+    );
   }
 
+  @Get('admin')
+  findOneForAdmin(@Query('id') id: string) {
+    return this.customiseStoreBannerService.findOneForAdmin(id);
+  }
 
   @Get()
   findOne(@Query('domain') domain: string) {
@@ -25,8 +44,10 @@ export class CustomiseStoreBannerController {
 
   @Delete('image')
   @UseGuards(AuthGuard('jwt'))
-  async deleteImage(@Query('uuid') uuid: string, @Query('userId') userId: string) {
-    return this.customiseStoreBannerService.removeImage(uuid,userId);
+  async deleteImage(
+    @Query('uuid') uuid: string,
+    @Query('userId') userId: string,
+  ) {
+    return this.customiseStoreBannerService.removeImage(uuid, userId);
   }
-
 }

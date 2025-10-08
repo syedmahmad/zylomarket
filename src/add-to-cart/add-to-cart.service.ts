@@ -20,7 +20,7 @@ export class AddToCartService {
     private readonly merchantRepository: typeof Merchant,
 
     @Inject('PRODUCT_REPOSITORY')
-    private readonly productRepository: typeof Product
+    private readonly productRepository: typeof Product,
   ) {}
 
   /**
@@ -29,14 +29,15 @@ export class AddToCartService {
   async addToCart(dto: CreateAddToCartDto) {
     const { guestId, productId, quantity } = dto;
 
-    console.log('dto',dto)
-
     if (!guestId || !productId || quantity < 1) {
       throw new BadRequestException('Invalid input for cart item');
     }
 
-    const product = await this.productRepository.findOne({ where: { id: productId } });
-    if (!product) throw new NotFoundException(`Product with ID ${productId} not found.`);
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product)
+      throw new NotFoundException(`Product with ID ${productId} not found.`);
 
     const merchant = await this.merchantRepository.findOne({
       where: { id: product.dataValues.merchantId },

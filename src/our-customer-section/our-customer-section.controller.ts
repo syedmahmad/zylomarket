@@ -27,6 +27,11 @@ export class OurCustomerSectionController {
     return this.ourCustomerSectionService.create(createOurCustomerSectionDto);
   }
 
+  @Get('by-id/:id')
+  findOneForAdmin(@Param('id') id: string) {
+    return this.ourCustomerSectionService.findOneForAdmin(id);
+  }
+
   @Get(':domain')
   findOne(@Param('domain') domain: string) {
     return this.ourCustomerSectionService.findOne(domain);
@@ -58,11 +63,12 @@ export class OurCustomerSectionController {
   @Patch('visibility/:id')
   @UseGuards(AuthGuard('jwt'))
   async updateVisibility(
-  @Body() updateVisibilityDto: UpdateVisibilityDto,
-  @Param('id') userId: number,
-) {
-  console.log('userId', userId);
-  return this.ourCustomerSectionService.updateVisibility(updateVisibilityDto, +userId);
-}
-
+    @Body() updateVisibilityDto: UpdateVisibilityDto,
+    @Param('id') userId: number,
+  ) {
+    return this.ourCustomerSectionService.updateVisibility(
+      updateVisibilityDto,
+      +userId,
+    );
+  }
 }

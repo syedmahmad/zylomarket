@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOurCustomerSectionDto } from './dto/create-our-customer-section.dto';
 import { UpdateOurCustomerSectionDto } from './dto/update-our-customer-section.dto';
 import { Testimonial } from 'src/database/entity/ourCustomer.entity';
@@ -17,185 +22,201 @@ export class OurCustomerSectionService {
 
     @Inject('MERCHANT_REPOSITORY')
     private readonly merchantRepository: typeof Merchant,
-    
-  ) { }
+  ) {}
 
   async create(data: any): Promise<Testimonial> {
     const { user_id, uuid } = data;
 
-    const store = await this.storeRepository.findOne({ where: { ownerId: user_id } });
+    const store = await this.storeRepository.findOne({
+      where: { ownerId: user_id },
+    });
 
     if (!store) {
       throw new NotFoundException(`Store with owner ID ${user_id} not found.`);
     }
 
-      // Step 3: Validate merchant
-        const merchant = await this.merchantRepository.findOne({
-          where: { userId: user_id, storeId: store.id },
-        });
-    
-        if (!merchant) {
-          throw new NotFoundException(
-            `Merchant not found in store ${store.id}.`,
-          );
-        }
+    // Step 3: Validate merchant
+    const merchant = await this.merchantRepository.findOne({
+      where: { userId: user_id, storeId: store.id },
+    });
 
-    const testimonial: any = await this.ourCustomerRepository.create({
-      ...data,
-      storeId: store.dataValues.id,
-      merchantId: merchant.id
-    }, 
-    {
-      context: { userId : uuid },
-      individualHooks: true,
-    } as any,
+    if (!merchant) {
+      throw new NotFoundException(`Merchant not found in store ${store.id}.`);
+    }
+
+    const testimonial: any = await this.ourCustomerRepository.create(
+      {
+        ...data,
+        storeId: store.dataValues.id,
+        merchantId: merchant.id,
+      },
+      {
+        context: { userId: uuid },
+        individualHooks: true,
+      } as any,
     );
 
     return testimonial;
   }
 
+  async findOneForAdmin(id: string) {
+    // const storeDomain = domain.concat('.zylospace.com');
+    const storeInfo = await this.storeRepository.findOne({
+      where: { id: id },
+    });
 
-  async findOne(domain: string) {
+    if (!storeInfo) {
+      throw new BadRequestException(`Store with owner id ${id} not found.`);
+    }
 
-
-     const storeDomain = domain.concat('.zylospace.com');
-      const storeInfo = await this.storeRepository.findOne({
-        where: { domain: storeDomain }
-      });
-    
-      if (!storeInfo) {
-        throw new BadRequestException(`Store with owner domain ${domain} not found.`);
-      }
-
-    const customersData = await this.ourCustomerRepository.findAll({ where: { storeId: storeInfo.dataValues.id} })
+    const customersData = await this.ourCustomerRepository.findAll({
+      where: { storeId: storeInfo.dataValues.id },
+    });
 
     if (!customersData) {
-      return []
+      return [];
     }
-    return customersData
-
-
+    return customersData;
   }
 
-  async update(id: number, updateDto: UpdateOurCustomerSectionDto): Promise<Testimonial> {
+  async findOne(domain: string) {
+    const storeDomain = domain.concat('.zylospace.com');
+    const storeInfo = await this.storeRepository.findOne({
+      where: { domain: storeDomain },
+    });
+
+    if (!storeInfo) {
+      throw new BadRequestException(
+        `Store with owner domain ${domain} not found.`,
+      );
+    }
+
+    const customersData = await this.ourCustomerRepository.findAll({
+      where: { storeId: storeInfo.dataValues.id },
+    });
+
+    if (!customersData) {
+      return [];
+    }
+    return customersData;
+  }
+
+  async update(
+    id: number,
+    updateDto: UpdateOurCustomerSectionDto,
+  ): Promise<Testimonial> {
     const testimonial = await this.ourCustomerRepository.findByPk(id);
 
     if (!testimonial) {
       throw new NotFoundException(`Testimonial with ID ${id} not found.`);
     }
 
-    await testimonial.update({...updateDto}, 
-      {
-      context: { userId : updateDto.uuid },
+    await testimonial.update({ ...updateDto }, {
+      context: { userId: updateDto.uuid },
       individualHooks: true,
-    } as any
-    );
+    } as any);
 
     return testimonial;
   }
 
+  async remove(
+    id: number,
+    uuid: string,
+  ): Promise<{ message: string; remaining: any[] }> {
+    const testimonial = await this.ourCustomerRepository.findByPk(id);
 
-  async remove(id: number, uuid: string): Promise<{ message: string; remaining: any[] }> {
-  const testimonial = await this.ourCustomerRepository.findByPk(id);
-
-  if (!testimonial) {
-    throw new NotFoundException(`Testimonial with ID ${id} not found.`);
-  }
-
-  await testimonial.destroy(
-    {
-      context: { userId : uuid },
-      individualHooks: true,
-    } as any
-  );
-
-  // Fetch remaining testimonials
-  const remaining = await this.ourCustomerRepository.findAll();
-
-  return {
-    message: `Testimonial with ID ${id} deleted successfully.`,
-    remaining,
-  };
-}
-
-
-
-   async removeImage(uuid: any): Promise<{ message: string }> {
-      // const banner = await this.ourCustomerRepository.findOne({
-      //   where: { testimonials_uuid: uuid },
-      // });
-    
-      // if (!banner) {
-      //   throw new NotFoundException('Banner not found');
-      // }
-    
-  
-      await this.ourCustomerRepository.update(
-        // @ts-ignore
-        { imageUrl: null },
-        { where: { testimonials_uuid: uuid } }
-      );
-    
-      return { message: 'Image URL removed from banner successfully' };
+    if (!testimonial) {
+      throw new NotFoundException(`Testimonial with ID ${id} not found.`);
     }
-    
 
+    await testimonial.destroy({
+      context: { userId: uuid },
+      individualHooks: true,
+    } as any);
 
-async updateVisibility(
-  updateVisibilityDto: UpdateVisibilityDto,
-  userId: number, // Make sure to pass this in the controller
-) {
-  const defaultHeading = 'What Our Customers Say';
-  const defaultSubHeading = "Don't just take our word for it. Here's what our customers have to say about their shopping experience.";
-  // Step 1: Find the store
-  const store = await this.storeRepository.findOne({ where: { ownerId: userId } });
-  if (!store) {
-    throw new NotFoundException(`Store with ID ${userId} not found.`);
+    // Fetch remaining testimonials
+    const remaining = await this.ourCustomerRepository.findAll();
+
+    return {
+      message: `Testimonial with ID ${id} deleted successfully.`,
+      remaining,
+    };
   }
 
-  // Step 2: Validate merchant
-  const merchant = await this.merchantRepository.findOne({
-    where: { storeId: store?.dataValues.id },
-  });
-  if (!merchant) {
-    throw new NotFoundException(`Merchant not found in store ${userId}.`);
+  async removeImage(uuid: any): Promise<{ message: string }> {
+    // const banner = await this.ourCustomerRepository.findOne({
+    //   where: { testimonials_uuid: uuid },
+    // });
+
+    // if (!banner) {
+    //   throw new NotFoundException('Banner not found');
+    // }
+
+    await this.ourCustomerRepository.update(
+      // @ts-ignore
+      { imageUrl: null },
+      { where: { testimonials_uuid: uuid } },
+    );
+
+    return { message: 'Image URL removed from banner successfully' };
   }
 
-  // Step 3: Find or create the record
-  const [record, created] = await this.ourCustomerRepository.findOrCreate({
-    where: { storeId: store?.dataValues.id },
-    defaults: {
-      storeId:store?.dataValues.id,
-      merchantId: merchant.id,
-      showOnUI: updateVisibilityDto.showOnUI,
-      heading: defaultHeading,
-      subHeading: defaultSubHeading,
-    } as any,
-  });
+  async updateVisibility(
+    updateVisibilityDto: UpdateVisibilityDto,
+    userId: number, // Make sure to pass this in the controller
+  ) {
+    const defaultHeading = 'What Our Customers Say';
+    const defaultSubHeading =
+      "Don't just take our word for it. Here's what our customers have to say about their shopping experience.";
+    // Step 1: Find the store
+    const store = await this.storeRepository.findOne({
+      where: { ownerId: userId },
+    });
+    if (!store) {
+      throw new NotFoundException(`Store with ID ${userId} not found.`);
+    }
 
-  // Step 4: Update if it was already created
-  if (!created) {
-    await record.update(
-      {
+    // Step 2: Validate merchant
+    const merchant = await this.merchantRepository.findOne({
+      where: { storeId: store?.dataValues.id },
+    });
+    if (!merchant) {
+      throw new NotFoundException(`Merchant not found in store ${userId}.`);
+    }
+
+    // Step 3: Find or create the record
+    const [record, created] = await this.ourCustomerRepository.findOrCreate({
+      where: { storeId: store?.dataValues.id },
+      defaults: {
+        storeId: store?.dataValues.id,
+        merchantId: merchant.id,
         showOnUI: updateVisibilityDto.showOnUI,
         heading: defaultHeading,
         subHeading: defaultSubHeading,
-        merchantId: merchant.id,
-      },
-      {
-        context: { userId: userId },
-        individualHooks: true,
       } as any,
-    );
+    });
+
+    // Step 4: Update if it was already created
+    if (!created) {
+      await record.update(
+        {
+          showOnUI: updateVisibilityDto.showOnUI,
+          heading: defaultHeading,
+          subHeading: defaultSubHeading,
+          merchantId: merchant.id,
+        },
+        {
+          context: { userId: userId },
+          individualHooks: true,
+        } as any,
+      );
+    }
+
+    return {
+      message: created
+        ? 'Visibility record created successfully'
+        : 'Visibility record updated successfully',
+      data: record,
+    };
   }
-
-  return {
-    message: created
-      ? 'Visibility record created successfully'
-      : 'Visibility record updated successfully',
-    data: record,
-  };
-}
-
-
 }

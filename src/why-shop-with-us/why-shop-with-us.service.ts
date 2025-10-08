@@ -18,27 +18,27 @@ export class WhyShopWithUsService {
 
     @Inject('STORE_REPOSITORY')
     private readonly storeRepository: typeof Store,
+  ) {}
 
-  ) { }
-
-   async createOrUpdate(dto: any) {
+  async createOrUpdate(dto: any) {
     const { userId, sectionTitle, description, features = [], uuid } = dto;
-    console.log('userId',userId)
-  
+
     // Validate store existence
-    const store = await this.storeRepository.findOne({ where: { ownerId: userId } });
+    const store = await this.storeRepository.findOne({
+      where: { ownerId: userId },
+    });
     if (!store?.dataValues?.id) {
       throw new NotFoundException(`Store with owner ID ${userId} not found.`);
     }
-  
+
     const storeId = store.dataValues.id;
-  
+
     // Check if section exists
-    let section: any = await this.whyShopWithUsRepository.findOne({ 
+    let section: any = await this.whyShopWithUsRepository.findOne({
       where: { storeId },
-      include: [WhyShopFeature]
+      include: [WhyShopFeature],
     });
-  
+
     if (section) {
       // Update existing section
       await section.update({ sectionTitle, description }, {
@@ -47,45 +47,51 @@ export class WhyShopWithUsService {
       } as any);
     } else {
       // Create new section
-      section = await this.whyShopWithUsRepository.create({
-        sectionTitle,
-        description,
-        storeId,
-      } as WhyShopSection, {
-        context: { userId },
-        individualHooks: true,
-      } as any);
+      section = await this.whyShopWithUsRepository.create(
+        {
+          sectionTitle,
+          description,
+          storeId,
+        } as WhyShopSection,
+        {
+          context: { userId },
+          individualHooks: true,
+        } as any,
+      );
     }
-  
+
     // Handle features with icon URLs from frontend
     if (features.length) {
       // Delete existing features
-      await this.whyShopFeaturesRepository.destroy({ where: { sectionId: section.id } });
-  
+      await this.whyShopFeaturesRepository.destroy({
+        where: { sectionId: section.id },
+      });
+
       // Create new features with icon URLs
-      const newFeatures = features.map(feature => ({
+      const newFeatures = features.map((feature) => ({
         title: feature.title,
         description: feature.description,
         icon: feature.icon || null, // Use the URL provided by frontend
         sectionId: section.id,
       }));
-  
+
       await this.whyShopFeaturesRepository.bulkCreate(newFeatures);
     }
-  
+
     // Return updated section with features
-    const sectionDetails = await this.whyShopWithUsRepository.findByPk(section.id, {
-      include: [WhyShopFeature],
-    });
-    
+    const sectionDetails = await this.whyShopWithUsRepository.findByPk(
+      section.id,
+      {
+        include: [WhyShopFeature],
+      },
+    );
+
     if (!sectionDetails) {
       throw new NotFoundException(`Section with ID ${section.id} not found.`);
     }
-  
+
     return sectionDetails;
   }
-  
-  
 
   async findAll() {
     return this.whyShopWithUsRepository.findAll({
@@ -95,26 +101,26 @@ export class WhyShopWithUsService {
 
   async findOne(id: number) {
     const section = await this.whyShopWithUsRepository.findOne({
-      where: { storeId: id},
+      where: { storeId: id },
       include: [WhyShopFeature],
     });
 
     if (!section) {
-      return []
-    };
+      return [];
+    }
 
     return section;
   }
 
-
   async updateVisibility(id: number, updateVisibilityDto: UpdateVisibilityDto) {
-  const record = await this.whyShopWithUsRepository.findOne({
-      where: { storeId: id},
+    const record = await this.whyShopWithUsRepository.findOne({
+      where: { storeId: id },
     });
 
-  const updatedRecord = await record?.update({ showOnUI: updateVisibilityDto.showOnUI });
+    const updatedRecord = await record?.update({
+      showOnUI: updateVisibilityDto.showOnUI,
+    });
 
-  return { message: 'Visibility updated successfully', data: updatedRecord };
-}
-
+    return { message: 'Visibility updated successfully', data: updatedRecord };
+  }
 }

@@ -19,11 +19,8 @@ export class AuthController {
     return user;
   }
 
-
   @Post('register')
-  async register(
-    @Body() body: RegisterDto,
-  ) {
+  async register(@Body() body: RegisterDto) {
     return this.authService.register(body.name, body.email, body.password);
   }
 
@@ -48,7 +45,7 @@ export class AuthController {
         lastName: payload.family_name,
         profilePic: payload.picture,
         provider: 'google',
-        emailVerified: payload.email_verified || false
+        emailVerified: payload.email_verified || false,
       };
 
       return this.authService.handleGoogleAuth(userData);
@@ -58,34 +55,30 @@ export class AuthController {
   }
 
   @Post('resend-otp')
-async resendOtp(@Body('email') email: string) {
-  return this.authService.resendOTP(email);
-}
-
-
-@Post('verify-email')
-async verifyEmail(@Body() body: { email: string; otp: string }) {
-  const { email, otp } = body;
-
-  if (!email || !otp) {
-    throw new BadRequestException('Email and OTP are required');
+  async resendOtp(@Body('email') email: string) {
+    return this.authService.resendOTP(email);
   }
 
-  const result = await this.authService.verifyEmail(email, otp);
-  return result;
-}
+  @Post('verify-email')
+  async verifyEmail(@Body() body: { email: string; otp: string }) {
+    const { email, otp } = body;
 
-// password reset rout..
-@Post('forgot-password')
-async forgotPassword(@Body() body: any) {
-  return this.authService.requestPasswordReset(body.email);
-}
+    if (!email || !otp) {
+      throw new BadRequestException('Email and OTP are required');
+    }
 
+    const result = await this.authService.verifyEmail(email, otp);
+    return result;
+  }
 
-@Post('reset-password')
-async resetPassword(@Body() dto: ResetPasswordDto) {
-  return this.authService.resetPassword(dto);
-}
+  // password reset rout..
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: any) {
+    return this.authService.requestPasswordReset(body.email);
+  }
 
-
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
+  }
 }
