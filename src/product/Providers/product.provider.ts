@@ -1,4 +1,4 @@
-import { Product } from "src/database/entity/product.entity";
+import { Product } from 'src/database/entity/product.entity';
 
 export const productProvider = [
   {
