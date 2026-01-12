@@ -6,32 +6,34 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ProductImage } from 'src/database/entity/product.images.entity';
 import { CampaignProduct } from 'src/database/entity/campaign.product.entity';
 import { SalesCampaign } from 'src/database/entity/sales.campaign.entity';
-import { userProvider } from './providers/user.provider';
-import { productProvider } from './providers/product.provider';
-import { productImageProvider } from './providers/productImage.provider';
-import { storeProvider } from './providers/store.provider';
-import { salesCampaignProvider } from './providers/saleCampaign.provider';
-import { campaignProductProvider } from './providers/campaign.product.provider';
-import { merchantProvider } from './providers/merchant.provider';
-
-
-
-
-
+// import { userProvider } from './providers/user.provider';
+import { productProvider } from './Providers/product.provider';
+import { productImageProvider } from './Providers/productImage.provider';
+import { storeProvider } from './Providers/store.provider';
+import { salesCampaignProvider } from './Providers/saleCampaign.provider';
+import { campaignProductProvider } from './Providers/campaign.product.provider';
+import { merchantProvider } from './Providers/merchant.provider';
+import { userProvider } from './Providers/user.provider';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Product,
-    ProductImage, CampaignProduct, SalesCampaign])],
+  imports: [
+    SequelizeModule.forFeature([
+      Product,
+      ProductImage,
+      CampaignProduct,
+      SalesCampaign,
+    ]),
+  ],
   controllers: [ProductController],
-  providers: [ProductService,
+  providers: [
+    ProductService,
     ...productProvider,
     ...productImageProvider,
     ...storeProvider,
     ...salesCampaignProvider,
     ...campaignProductProvider,
     ...merchantProvider,
-    ...userProvider
+    ...userProvider,
   ],
 })
-export class ProductModule { }
-
+export class ProductModule {}
